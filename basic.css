@@ -67,7 +67,22 @@ header section {
 
   background-color: #a679ff;
   color: black;
-  text-decoration: none;
+  text-decoration: none; 
+}
+
+.a_identificarse .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;       
+  height: 50px;      
+  font-size: 12px;   
+  border-radius: 50%;
+  font-weight: bold;
+
+  background-color: #a679ff;
+  color: black;
+  text-decoration: none; 
 }
 
 .a_identificarse a:hover {
@@ -104,6 +119,61 @@ nav a {
 .contenido {
   padding: 16px;
   flex: 1;
+  font-size: 15px;
+}
+
+/*dl*/
+dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin: 0;
+}
+dt {
+  font-weight: 600;
+  color: #4b2b99;
+}
+dd {
+  margin: 0;
+}
+
+/*imagenes*/
+.imagenes {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  margin: 20px 0;
+}
+/* Imagen principal */
+.imagen_principal {
+  border-radius: 20px;
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+}
+.imagen_principal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+}
+/* Imágenes secundarias (2 en vertical) */
+.imagen_secundaria {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 150px;
+  height: 250px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.imagen_secundaria img {
+  padding: 2px;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  border-radius: 20px;
 }
 
 /*listas*/
@@ -114,12 +184,10 @@ section ul {
   margin: 16px auto;
   max-width: 600px;
 }
-
 main ul li,
 section ul li {
   margin-bottom: 10px;
 }
-
 main ul li a,
 section ul li a {
   display: block;
@@ -127,17 +195,50 @@ section ul li a {
   border: 1px solid #d1b800;
   color: #000;
   border-radius: 10px;
-  
+
   padding: 10px 14px;
   text-decoration: none;
   font-weight: normal;       
   transition: all 0.2s ease;
 }
-
 main ul li a:hover,
 section ul li a:hover {
   background-color: #ffde59;
   transform: translateY(-2px); /*efecto de movimiento*/
+}
+
+/*fieldset*/
+fieldset {
+    border: 2px solid #a679ff;   
+    border-radius: 10px;         
+    padding: 16px;
+    margin: 20px 0;
+    background-color: #fffbe0;   
+}
+legend {
+    padding: 0 10px;            
+    font-weight: 600;
+    margin-left: 12px;
+    margin-right: 12px;
+    color: #4b2b99;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/*enlaces class="enlaces"*/
+a.enlaces {
+  display: inline-block;
+  text-decoration: none;
+  color: #000;
+  background-color: #a679ff;
+  padding: 8px 14px;
+  border-radius: 500px;
+  border: 1px solid black;
+  transition: all 0.2s ease;
+}
+a.enlaces:hover {
+  background-color: #8e5fff;
+  transform: translateY(-2px);
 }
 
 /* FOOTER */
@@ -148,7 +249,6 @@ footer {
   border-top: 1px solid rgba(0, 0, 0, 0.15);
   width: 100%;
 }
-
 footer p {
   margin: 4px 0;
   color: #000;

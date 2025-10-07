@@ -6,6 +6,7 @@
     <title>Acceso restringido - Pisos & Inmuebles</title>
 
     <!-- Links-->
+    <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
     <link rel="stylesheet" href="basic.css">
 
   </head>
@@ -14,28 +15,32 @@
     <!-- Cabecera reutilizada -->
     <header>
       <section>
-        <article class="a_logo">
-          <a href="index.html"><img src="../../imagenes/logo.png"></a>
-        </article>
 
-        <article class="a_titulo">
-          <h1>Pisos & Inmuebles</h1>
-          <p>La llave de tu nuevo hogar está aquí</p>
-        </article>
-        <article class="a_identificarse">
-          <a class="btn" href="signup.html">Sign Up</a>
-          <a class="btn" href="login.html">Log In</a>
-        </article>
+        <div class="cabecera">
+          <article class="a_logo">
+            <a href="index.html"><img src="../../imagenes/logo.png" alt="Logo"></a>
+          </article>
+
+          <article class="a_titulo">
+            <h1>Pisos & Inmuebles</h1>
+            <p>La llave de tu nuevo hogar está aquí</p>
+          </article>
+
+          <article class="a_identificarse">
+            <a class="btn" href="signup.html">Sign Up</a>
+            <a class="btn" href="login.html">Log In</a>
+          </article>
+        </div>
+
       </section>
     </header>
 
     <nav aria-label="Navegación principal">
       <a href="index.html">Inicio</a>
-      |
       <a href="f.busqueda.html">Búsqueda completa</a>
     </nav>
 
-    <main>
+    <main class="contenido">
       <section>
         <article>
           <h2>Acceso restringido</h2>
@@ -45,12 +50,12 @@
             <p><strong>¿Quieres saber más sobre tu inmueble ideal?</strong></p>
             <p>Regístrate o inicia sesión si ya estás registrado :)</p>
             <p>
-              <a href="signup.html">Sign up</a>
-              <a href="login.html">Log in</a>
+              <a class="enlaces" href="signup.html">Sign up</a>
+              <a class="enlaces" href="login.html">Log in</a>
             </p>
           </fieldset>
 
-          <p><a href="principal_no_ident.html">Volver a la página principal</a></p>
+          <p><a class="enlaces" href="principal_no_ident.html">Volver a la página principal</a></p>
         </article>
       </section>
     </main>

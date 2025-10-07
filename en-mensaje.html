@@ -6,43 +6,64 @@
     <title>Pisos & Inmuebles</title>
     <!-- Links-->
     <link rel="stylesheet" href="basic.css">
+    <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
     
 </head>
 <body>
 
-    <header>
-      <section>
+  <header>
+    <section>
+      <div class="cabecera">
         <article class="a_logo">
-          <a href="index.html"><img src="../../imagenes/logo.png"></a>
+          <a href="index.html"><img src="../../imagenes/logo.png" alt="Logo"></a>
         </article>
 
         <article class="a_titulo">
           <h1>Pisos & Inmuebles</h1>
           <p>La llave de tu nuevo hogar está aquí</p>
         </article>
+
         <article class="a_identificarse">
-          <a class="btn" href="cuenta.html">Cuenta</a>
-          
+          <a href="cuenta.html" class="icon-user-outline" title="Cuenta"></a>
         </article>
-      </section>
-    </header>
+      </div>
+
+    </section>
+  </header>
     
     <nav>
         <a href="index.html">Inicio</a>
-        <a href="contacto.html">Contacto</a>
         <a href="f.busqueda.html">Búsqueda completa</a>
     </nav>
-      
+
+  <main class="contenido">
     <section>
-        <h2>Mensaje enviado correctamente</h2>
-        <p>Estos son los datos introducidos:</p>
-        <ul>
-          <li><strong>Asunto:</strong> Compra piso en Madrid</li>
-          <li><strong>Mensaje:</strong> Estoy interesado en este inmueble.</li>
-          <li><strong>Usuario:</strong> juanperez</li>
-          <li><strong>Email:</strong> juan@example.com</li>
-        </ul>
+      <fieldset>
+        <legend>Mensaje enviado correctamente</legend>
+
+        <dl>
+          <dt>Asunto</dt>
+          <dd>Compra piso en Madrid</dd>
+
+          <dt>Mensaje</dt>
+          <dd>Estoy interesado en este inmueble.</dd>
+
+          <dt>Usuario</dt>
+          <dd>juanperez</dd>
+
+          <dt>Email</dt>
+          <dd>juan@example.com</dd>
+        </dl>
+
+      
+        
+      </fieldset>
+      <a class="enlaces" href="contacto.html">Contacto</a>
     </section>
+  </main>
+
+      
+    
 
     <footer>
         <p>Lucía Vidal Ortiz & Miriam Mendiola Soriano</p>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Detalle del anuncio - Pisos & Inmuebles</title>
     <!-- Links-->
+    <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
     <link rel="stylesheet" href="basic.css">
  
   </head>
@@ -12,54 +13,67 @@
 
     <header>
       <section>
-        <article class="a_logo">
-          <a href="index.html"><img src="../../imagenes/logo.png"></a>
-        </article>
+        <div class="cabecera">
+          <article class="a_logo">
+            <a href="index.html"><img src="../../imagenes/logo.png" alt="Logo"></a>
+          </article>
 
-        <article class="a_titulo">
-          <h1>Pisos & Inmuebles</h1>
-          <p>La llave de tu nuevo hogar está aquí</p>
-        </article>
-        <article class="a_identificarse">
-          <a class="btn" href="cuenta.html">Cuenta</a>
-                
-        </article>
+          <article class="a_titulo">
+            <h1>Pisos & Inmuebles</h1>
+            <p>La llave de tu nuevo hogar está aquí</p>
+          </article>
+
+          <article class="a_identificarse">
+            <a href="cuenta.html" class="icon-user-outline" title="Cuenta"></a>
+          </article>
+        </div>
+
       </section>
     </header>
 
     <nav aria-label="Navegación principal">
       <a href="index.html">Inicio</a>
-      |
       <a href="f.busqueda.html">Búsqueda completa</a>
     </nav>
 
-    <main>
-
+    <main class="contenido">
       <article>
-        <section>
-          <h2>Piso luminoso en el centro</h2>
-          <p>
-            <strong>Tipo de anuncio:</strong> Alquiler
-            <strong>Tipo de vivienda:</strong> Vivienda
-          </p>
-        </section>
 
-        <!-- Foto  -->
-        <p>IMAGEN</p>
-        <p>IMAGENES</p>
+        <h2>Piso luminoso en el centro</h2>
 
-        <!-- Texto descriptivo -->
-        <section aria-labelledby="desc">
-          <h3 id="desc">Descripción</h3>
-          <p>
-            Vivienda reformada con 3 habitaciones y 2 baños. Salón-comedor con salida a balcón, cocina
-            equipada y orientación sur. Finca con ascensor. Ideal para entrar a vivir.
-          </p>
-        </section>
+        <div class="imagenes">
+          <div class="imagen_principal">
+            <img src="../../imagenes/piso.jpg" alt="Foto principal del piso">
+          </div>
 
-        <!-- Info del anuncio -->
-        <section aria-labelledby="meta">
-          <h3 id="meta">Información del anuncio</h3>
+          <div class="imagen_secundaria">
+            <img src="../../imagenes/piso1.jpg" alt="Foto adicional del piso">
+            <img src="../../imagenes/piso3.jpg" alt="Foto adicional del piso">
+          </div>
+        </div>
+
+
+        <!-- DESCRIPCIÓN -->
+        <fieldset>
+          <legend>Descripción</legend>
+          <dl>
+            <dt>Tipo de anuncio</dt>
+            <dd>Alquiler</dd>
+
+            <dt>Tipo de vivienda</dt>
+            <dd>Vivienda</dd>
+
+            <dt>Detalles</dt>
+            <dd>
+              Vivienda reformada con 3 habitaciones y 2 baños. Salón-comedor con salida a balcón, cocina
+              equipada y orientación sur. Finca con ascensor. Ideal para entrar a vivir.
+            </dd>
+          </dl>
+        </fieldset>
+
+        <!-- INFORMACIÓN DEL ANUNCIO -->
+        <fieldset>
+          <legend>Información del anuncio</legend>
           <dl>
             <dt>Fecha de publicación</dt>
             <dd><time datetime="2025-05">05/2025</time></dd>
@@ -76,32 +90,47 @@
             <dt>Propietario</dt>
             <dd>User</dd>
           </dl>
-        </section>
+        </fieldset>
 
-        <!-- Características -->
-        <section aria-labelledby="caract">
-          <h3 id="caract">Características</h3>
-          <ul>
-            <li>Superficie: 95 m²</li>
-            <li>Habitaciones: 3</li>
-            <li>Baños: 2</li>
-            <li>Planta: 4ª</li>
-            <li>Año de construcción: 2008</li>
-            <li>Ascensor</li>
-            <li>Balcón</li>
-          </ul>
-        </section>
+        <!-- CARACTERÍSTICAS -->
+        <fieldset>
+          <legend>Características</legend>
+          <dl>
+            <dt>Superficie</dt>
+            <dd>95 m²</dd>
 
+            <dt>Habitaciones</dt>
+            <dd>3</dd>
 
-        <!-- Enviar mensaje -->
-        <aside aria-labelledby="cta">
-          <h3 id="cta">¿Interesado?</h3>
+            <dt>Baños</dt>
+            <dd>2</dd>
+
+            <dt>Planta</dt>
+            <dd>4ª</dd>
+
+            <dt>Año de construcción</dt>
+            <dd>2008</dd>
+
+            <dt>Ascensor</dt>
+            <dd>Sí</dd>
+
+            <dt>Balcón</dt>
+            <dd>Sí</dd>
+          </dl>
+        </fieldset>
+
+        <!-- CTA -->
+        <fieldset>
+          <legend>¿Interesado?</legend>
           <p>
-            <a href="enviar_mensaje.html">Enviar mensaje al anunciante</a>
+            <a class="enlaces" href="enviar_mensaje.html">Enviar mensaje al anunciante</a>
           </p>
-        </aside>
+        </fieldset>
+
       </article>
     </main>
+
+
 
     <footer>
       <p>Lucía Vidal Ortiz &amp; Miriam Mendiola Soriano</p>
