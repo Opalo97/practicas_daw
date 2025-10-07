@@ -122,21 +122,6 @@ nav a {
   font-size: 15px;
 }
 
-/*dl*/
-dl {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 12px;
-  margin: 0;
-}
-dt {
-  font-weight: 600;
-  color: #4b2b99;
-}
-dd {
-  margin: 0;
-}
-
 /*imagenes*/
 .imagenes {
   display: flex;
@@ -223,6 +208,19 @@ legend {
     color: #4b2b99;
     font-size: 1rem;
     font-weight: bold;
+}
+dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin: 0;
+}
+dt {
+  font-weight: 600;
+  color: #4b2b99;
+}
+dd {
+  margin: 0;
 }
 
 /*enlaces class="enlaces"*/

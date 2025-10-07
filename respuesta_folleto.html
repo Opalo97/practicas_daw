@@ -6,33 +6,37 @@
     <title>Confirmación solicitud folleto - Pisos & Inmuebles</title>
     <!-- Links-->
     <link rel="stylesheet" href="basic.css">
+    <link rel="stylesheet" href="froms.css">
+    <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
   </head>
   <body>
 
     <header>
       <section>
-        <article class="a_logo">
-          <a href="index.html"><img src="../../imagenes/logo.png"></a>
-        </article>
+        <div class="cabecera">
+          <article class="a_logo">
+            <a href="index.html"><img src="../../imagenes/logo.png" alt="Logo"></a>
+          </article>
 
-        <article class="a_titulo">
-          <h1>Pisos & Inmuebles</h1>
-          <p>La llave de tu nuevo hogar está aquí</p>
-        </article>
-        <article class="a_identificarse">
-          <a class="btn" href="cuenta.html">Cuenta</a>
-          
-        </article>
+          <article class="a_titulo">
+            <h1>Pisos & Inmuebles</h1>
+            <p>La llave de tu nuevo hogar está aquí</p>
+          </article>
+
+          <article class="a_identificarse">
+            <a href="cuenta.html" class="icon-user-outline" title="Cuenta"></a>
+          </article>
+        </div>
+
       </section>
     </header>
 
     <nav aria-label="Navegación principal">
       <a href="index.html">Inicio</a>
-      |
       <a href="f.busqueda.html">Búsqueda completa</a>
     </nav>
 
-    <main>
+    <main class="contenido">
       <section aria-labelledby="conf">
         <h2 id="conf">Solicitud registrada</h2>
         <p>
@@ -106,10 +110,8 @@
       </section>
 
       <section aria-labelledby="acciones">
-        <h3 id="acciones">Acciones</h3>
         <p>
-          <a href="solicitar_folleto.html">Volver al formulario</a> |
-          <a href="index.html">Ir a Inicio</a>
+          <a class="enlaces" href="solicitar_folleto.html">Volver al formulario</a> 
         </p>
       </section>
     </main>

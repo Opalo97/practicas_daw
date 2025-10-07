@@ -6,41 +6,59 @@
     <title>Pisos & Inmuebles</title>
     <!-- Links-->
     <link rel="stylesheet" href="basic.css">
+    <link rel="stylesheet" href="froms.css">
+    <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
     
 </head>
 <body>
 
     <header>
-            <section>
-                <article class="a_logo">
-                    <a href="index.html"><img src="../../imagenes/logo.png"></a>
-                </article>
+      <section>
 
-                <article class="a_titulo">
-                    <h1>Pisos & Inmuebles</h1>
-                    <p>La llave de tu nuevo hogar está aquí</p>
-                </article>
-                <article class="a_identificarse">
-                    <a class="btn" href="signup.html">Sign Up</a>
-                </article>
-            </section>
-        </header>
+        <div class="cabecera">
+          <article class="a_logo">
+            <a href="index.html"><img src="../../imagenes/logo.png" alt="Logo"></a>
+          </article>
+
+          <article class="a_titulo">
+            <h1>Pisos & Inmuebles</h1>
+            <p>La llave de tu nuevo hogar está aquí</p>
+          </article>
+
+          <article class="a_identificarse">
+            <a class="btn" href="signup.html">Sign Up</a>
+          </article>
+        </div>
+
+      </section>
+    </header>
     <nav aria-label="Navegación principal">
         <a href="index.html">Inicio</a>
         <a href="f.busqueda.html">Búsqueda completa</a>
     </nav>
-    <section>
-        <h2>Iniciar sesión</h2>
-        <form action="index.html" method="post">
-          <label for="usuario">Usuario</label>
-          <input type="text" id="usuario" name="usuario" required />
-      
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" name="password" required />
-      
-          <input type="submit" value="Acceder" style="margin-top:1rem;" />
-        </form>
-    </section>
+
+    <main class="contenido">
+      <section>
+        <fieldset>
+          <legend>Iniciar sesión</legend>
+
+          <form action="index.html" method="post">
+            <label for="usuario">Usuario</label><br>
+            <input type="text" id="usuario" name="usuario" required><br><br>
+
+            <label for="password">Contraseña</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+
+            <button type="submit" class="button">Acceder</button>
+            <a href="signup.html" class="enlaces">Crear cuenta</a>
+          </form>
+        </fieldset>
+      </section>
+    </main>
+
+
+
+
     <footer>
         <p>Lucía Vidal Ortiz & Miriam Mendiola Soriano</p>
         <p>&copy; 2025 Pisos & Inmuebles</p>

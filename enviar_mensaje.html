@@ -6,6 +6,7 @@
     <title>Enviar mensaje - Pisos & Inmuebles</title>
     <!-- Links-->
     <link rel="stylesheet" href="basic.css">
+    <link rel="stylesheet" href="froms.css">
     <link rel="stylesheet" href="../../iconos/fontello-88eddae3/css/fontello.css">
     
   </head>
@@ -37,58 +38,56 @@
     </nav>
 
     <main class="contenido">
-
       <article>
         <section>
           <h2>Enviar mensaje al anunciante</h2>
-          <p>
-            Anuncio: <strong>Piso luminoso en el centro</strong>
-          </p>
-          <p>Mensaje a : <strong>user@gmail.com</strong></p>
+
+          <fieldset>
+            <legend>Información</legend>
+            <dl>
+              <dt>Anuncio:</dt>
+              <dd>Piso luminoso en el centro</dd>
+
+              <dt>Mensaje a:</dt>
+              <dd>jose@gmail.com</dd>
+            </dl>
+          </fieldset>
         </section>
 
         <section aria-labelledby="form-mensaje">
-          <h3 id="form-mensaje">Formulario</h3>
+          <fieldset>
+            <legend>Formulario</legend>
 
-          <form action="en-mensaje.html" method="post">
-            <input type="hidden" name="id_anuncio" value="1234">
+            <!-- AÑADIMOS la clase enviar-mensaje -->
+            <form class="enviar-mensaje" action="en-mensaje.html" method="post">
+              <input type="hidden" name="id_anuncio" value="1234">
 
-            <fieldset>
-              <legend>Tipo de mensaje</legend>
-              <label>
-                <input type="radio" name="tipo" value="info">
-                Más información
-              </label>
-              <br>
-              <label>
-                <input type="radio" name="tipo" value="cita">
-                Solicitar una cita
-              </label>
-              <br>
-              <label>
-                <input type="radio" name="tipo" value="oferta">
-                Comunicar una oferta
-              </label>
-            </fieldset>
+              <!-- Tipo de mensaje -->
+              <div class="grupo-radios">
+                <label><input type="radio" name="tipo" value="info"> Más información</label>
+                <label><input type="radio" name="tipo" value="cita"> Solicitar una cita</label>
+                <label><input type="radio" name="tipo" value="oferta"> Comunicar una oferta</label>
+              </div>
 
-            <fieldset>
-              <legend>Mensaje</legend>
-              <label for="texto">Escribe tu mensaje:</label><br>
-              <textarea id="texto" name="texto" rows="7" cols="60" placeholder="Hola, estoy interesado/a en su anuncio..."></textarea>
-            </fieldset>
 
-            <p>
-              <button type="submit">Enviar</button>
-              <button type="reset">Limpiar</button>
-            </p>
+              <!-- Mensaje -->
+              <label for="texto">Escribe tu mensaje:</label>
+              <textarea id="texto" name="texto" rows="7" cols="60"
+                placeholder="Hola, estoy interesado/a en su anuncio..."></textarea>
 
-            <p>
-              <a class="enlaces" href="detalle_anuncio.html">Cancelar</a>
-            </p>
-          </form>
+              <!-- Botones -->
+              <div class="acciones">
+                <button class="button" type="submit">Enviar</button>
+                <button class="button" type="reset">Limpiar</button>
+                <a class="enlaces" href="detalle_anuncio.html">Cancelar</a>
+              </div>
+            </form>
+          </fieldset>
         </section>
       </article>
     </main>
+
+
 
     <footer>
       <p>Lucía Vidal Ortiz &amp; Miriam Mendiola Soriano</p>
