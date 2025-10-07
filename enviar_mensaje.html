@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enviar mensaje - Pisos & Inmuebles</title>
+    
+  </head>
+  <body>
+
+    <header>
+      <section>
+        
+        <article class="a_titulo">
+          <h1>Pisos & Inmuebles</h1>
+          <p>La llave de tu nuevo hogar está aquí</p>
+        </article>
+        <article class="a_identificarse">
+          <button type="submit"><a href="cuenta.html">Cuenta</a></button>
+        </article>
+      </section>
+    </header>
+
+    <nav aria-label="Navegación principal">
+      <a href="index.html">Inicio</a>
+      |
+      <a href="f.busqueda.html">Búsqueda completa</a>
+    </nav>
+
+    <main>
+
+
+      <article>
+        <section>
+          <h2>Enviar mensaje al anunciante</h2>
+          <p>
+            Anuncio: <strong>Piso luminoso en el centro</strong>
+          </p>
+          <p>Mensaje a : <strong>user@gmail.com</strong></p>
+        </section>
+
+        <section aria-labelledby="form-mensaje">
+          <h3 id="form-mensaje">Formulario</h3>
+
+          <form action="en-mensaje.html" method="post">
+            <input type="hidden" name="id_anuncio" value="1234">
+
+            <fieldset>
+              <legend>Tipo de mensaje</legend>
+              <label>
+                <input type="radio" name="tipo" value="info">
+                Más información
+              </label>
+              <br>
+              <label>
+                <input type="radio" name="tipo" value="cita">
+                Solicitar una cita
+              </label>
+              <br>
+              <label>
+                <input type="radio" name="tipo" value="oferta">
+                Comunicar una oferta
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Mensaje</legend>
+              <label for="texto">Escribe tu mensaje:</label><br>
+              <textarea id="texto" name="texto" rows="7" cols="60" placeholder="Hola, estoy interesado/a en su anuncio..."></textarea>
+            </fieldset>
+
+            <p>
+              <button type="submit">Enviar</button>
+              <button type="reset">Limpiar</button>
+              <a href="detalle_anuncio.html">Cancelar</a>
+            </p>
+          </form>
+        </section>
+      </article>
+    </main>
+
+    <footer>
+      <p>Lucía Vidal Ortiz &amp; Miriam Mendiola Soriano</p>
+      <p>&copy; 2025 Pisos & Inmuebles</p>
+    </footer>
+
+  </body>
+</html>
