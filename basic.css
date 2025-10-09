@@ -256,7 +256,16 @@ footer p {
 
 /* PARA PC*/
 @media (min-width: 1920px) {
-  .a_titulo h1 { font-size: 32px; }
-  .a_titulo p  { font-size: 16px; }
-  .contenido   { padding: 24px 32px; }
+  .a_titulo h1 { 
+    font-size: 32px; 
+  }
+  .a_titulo p  {
+    font-size: 16px; 
+  }
+  .contenido {
+    max-width: 1200px;        
+    margin: 0 auto;          
+    padding: 20px;          
+    box-sizing: border-box;   
+  }
 }
