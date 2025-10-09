@@ -46,10 +46,13 @@
         <form action="resultado.html" method="get">
           <fieldset>
             <legend>Tipo de anuncio</legend>
-            <input type="radio" id="venta" name="tipo" value="venta" />
-            <label for="venta">Venta</label>
-            <input type="radio" id="alquiler" name="tipo" value="alquiler" />
-            <label for="alquiler">Alquiler</label>
+            <div class="radio-group">
+              <input type="radio" id="venta" name="tipo" value="venta">
+              <label for="venta">Venta</label>
+            
+              <input type="radio" id="alquiler" name="tipo" value="alquiler">
+              <label for="alquiler">Alquiler</label>
+            </div>            
           </fieldset>
 
           <fieldset>
