@@ -1,0 +1,218 @@
+/* ===== MODO OSCURO COMPLETO ===== */
+@media (prefers-color-scheme: dark) {
+
+    /* HTML y BODY */
+    html,
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+    /* HEADER */
+    header {
+        background-color: #1c1c1c;
+    }
+
+    .a_titulo h1,
+    .a_titulo p {
+        color: #d4bfff;
+    }
+
+    .a_identificarse a,
+    .a_identificarse .btn {
+        background-color: #5a3fa8;
+        color: #fff;
+    }
+
+    .a_identificarse a:hover {
+        background-color: #fff;
+        color: #5a3fa8;
+    }
+
+    /* NAVEGACIÓN */
+    nav {
+        background-color: #2a2350;
+    }
+
+    nav a {
+        color: #f1f1f1;
+    }
+
+    nav a:hover {
+        background-color: #5a3fa8;
+    }
+
+    /* CONTENIDO */
+    .contenido,
+    main.contenido {
+        background-color: #1b1b1b;
+        color: #e0e0e0;
+        border-color: #3a2f5a;
+    }
+
+    /* ARTÍCULOS */
+    main.contenido article {
+        background-color: #221b2f;
+        border-color: #3a3161;
+        color: #e0e0e0;
+    }
+
+    main.contenido article h4 {
+        color: #cdaaff;
+    }
+
+    main.contenido article p {
+        color: #dcdcdc;
+    }
+
+    main.contenido article:hover {
+        box-shadow: 0 2px 8px rgba(90, 63, 168, 0.3);
+    }
+
+    /* TITULOS */
+    main.contenido h2 {
+        color: #cdaaff;
+    }
+
+    main.contenido h3 {
+        color: #b78aff;
+        border-left-color: #5a3fa8;
+    }
+
+    /* LISTAS */
+    main ul li a,
+    section ul li a {
+        background-color: #2a2436;
+        border-color: #5a3fa8;
+        color: #e0e0e0;
+    }
+
+    main ul li a:hover,
+    section ul li a:hover {
+        background-color: #5a3fa8;
+    }
+
+    /* FIELDSET */
+    fieldset {
+        background-color: #1f1a2b;
+        border-color: #5a3fa8;
+        color: #e0e0e0;
+    }
+
+    legend {
+        color: #cdaaff;
+    }
+
+    dl dt {
+        color: #cdaaff;
+    }
+
+    dl dd {
+        color: #dcdcdc;
+    }
+
+    /* ENLACES */
+    a.enlaces {
+        background-color: #5a3fa8;
+        color: #fff;
+        border-color: #7a5fff;
+    }
+
+    a.enlaces:hover {
+        background-color: #7a5fff;
+    }
+
+    /* FOOTER */
+    footer {
+        background-color: #1c1c1c;
+        color: #ccc;
+        border-top-color: #3a3161;
+    }
+
+    /* FORMULARIOS */
+    input,
+    select,
+    textarea {
+        background-color: #2a2436;
+        color: #fff;
+        border-color: #5a3fa8;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #cdaaff;
+        box-shadow: 0 0 5px rgba(203, 164, 255, 0.3);
+    }
+
+    label {
+        color: #cdaaff;
+    }
+
+    /* RADIOS */
+    input[type="radio"] {
+        border-color: #cdaaff;
+        background-color: #1b1b1b;
+    }
+
+    input[type="radio"]:checked {
+        background-color: #cdaaff;
+        border-color: #cdaaff;
+    }
+
+    /* BOTONES */
+    .button,
+    .btn-subir,
+    main.contenido button {
+        background-color: #5a3fa8;
+        color: #fff;
+        border-color: #7a5fff;
+    }
+
+    .button:hover,
+    .btn-subir:hover,
+    main.contenido button:hover {
+        background-color: #7a5fff;
+    }
+
+    /* INPUT COLOR */
+    input[type="color"] {
+        background-color: #2a2436;
+        border-color: #5a3fa8;
+    }
+
+    /* TABLAS TARIFAS */
+    section[aria-labelledby="tarifas"] {
+        background-color: #1b1825;
+        color: #e0e0e0;
+    }
+
+    section[aria-labelledby="tarifas"] h3 {
+        color: #cdaaff;
+    }
+
+    section[aria-labelledby="tarifas"] th {
+        background-color: #5a3fa8;
+        color: #fff;
+    }
+
+    section[aria-labelledby="tarifas"] td {
+        color: #ddd;
+        border-color: #4a3f6f;
+    }
+
+    section[aria-labelledby="tarifas"] tbody tr:nth-child(even) {
+        background-color: #221f33;
+    }
+
+    section[aria-labelledby="tarifas"] tbody tr:hover {
+        background-color: #4a3f6f;
+    }
+
+    /* IMÁGENES */
+    .imagen_principal img,
+    .imagen_secundaria img {
+        filter: brightness(0.9);
+    }
+
+}
