@@ -8,7 +8,7 @@
   <!-- Links-->
   <link rel="stylesheet" href="iconos/fontello-88eddae3/css/fontello.css">
   <link rel="stylesheet" href="basic.css" title="Modo Claro">
-  <link rel="stylesheet" href="froms.css">
+  <link rel="stylesheet" href="forms.css">
   <link rel="alternate stylesheet" href="modo-oscuro.css" title="Modo Oscuro">
   <link rel="stylesheet" href="print.css" media="print">
   <link rel="alternate stylesheet" href="accesible.css" title="Accesible">
@@ -52,7 +52,7 @@
       <article>
         <h2>Registro de nuevo usuario</h2>
 
-        <form action="index.html" method="post" enctype="multipart/form-data">
+        <form id="formRegistro" class="form-registro" action="index.html" method="post" enctype="multipart/form-data" novalidate>
           <fieldset>
             <legend>Datos de acceso</legend>
 
@@ -70,14 +70,14 @@
             <legend>Datos personales</legend>
 
             <label for="email">Correo electrónico:</label>
-            <input type="email" id="email" name="email" />
+            <input type="text" id="email" name="email" />
 
             <p>Sexo:</p>
             <label><input type="radio" id="hombre" name="sexo" value="hombre" /> Hombre</label>
             <label><input type="radio" id="mujer" name="sexo" value="mujer" /> Mujer</label>
 
             <label for="fecha">Fecha de nacimiento:</label>
-            <input type="date" id="fecha" name="fecha" />
+            <input type="text" id="fecha" name="fecha" placeholder="dd/mm/aaaa" />
 
             <label for="ciudad">Ciudad:</label>
             <input type="text" id="ciudad" name="ciudad" />
@@ -102,13 +102,14 @@
               <input type="file" id="foto" name="foto" class="input-foto" />
               <span class="file-name">foto_piso2.jpg</span>
             </div>
-
           </fieldset>
 
-          <p>
-            <input type="submit" value="Registrarse" />
-          </p>
+          <!-- Contenedor para errores -->
+          <div id="errores" class="errores"></div>
+
+          <p><input type="submit" class="button" value="Registrarse" /></p>
         </form>
+
       </article>
     </section>
   </main>
@@ -118,6 +119,10 @@
     <p>Lucía Vidal Ortiz &amp; Miriam Mendiola Soriano</p>
     <p>&copy; 2025 Pisos & Inmuebles</p>
   </footer>
+
+  <!-- JS-->
+  <script src="registro.js"></script>
+
 
 </body>
 
