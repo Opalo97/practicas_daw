@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mensajesError.length > 0) {
       alert("Por favor, corrige los siguientes errores:\n\n" + mensajesError.join("\n"));
       event.preventDefault(); // Evita el envío
-    } else {
-      alert("Inicio de sesión correcto. ¡Bienvenido!");
     }
   });
 });
