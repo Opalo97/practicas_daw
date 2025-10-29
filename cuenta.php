@@ -9,7 +9,8 @@ require_once("inicio.inc");
     <li><a href="#">Mis datos</a></li>
     <li><a href="index_no.php">Darme de baja</a></li>
     <li><a href="mis_anuncios.php">Visualizar mis anuncios</a></li>
-    <li><a href="#">Crear un anuncio nuevo</a></li>
+    <li><a href="anyadir_foto.php">Añadir foto a anuncio</a></li>
+    <li><a href="crear_anuncio.php">Crear un anuncio nuevo</a></li>
     <li><a href="mis_mensajes.php">Visualizar mis mensajes</a></li>
     <li><a href="solicitar_folleto.php">Solicitar folleto publicitario</a></li>
     <li><a href="index_no.php">Salir</a></li>
