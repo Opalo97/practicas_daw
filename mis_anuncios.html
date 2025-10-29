@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pisos & Inmuebles</title>
-
+  <title>Mis Anuncios - Pisos & Inmuebles</title>
+  <!-- Links-->
   <link rel="stylesheet" href="iconos/fontello-88eddae3/css/fontello.css">
   <link rel="stylesheet" href="basic.css" title="Modo Claro">
   <link rel="stylesheet" href="forms.css">
@@ -14,6 +14,7 @@
   <link rel="alternate stylesheet" href="accesible.css" title="Accesible">
   <link rel="alternate stylesheet" href="alto-contraste.css" title="Modo Alto Contraste">
   <link rel="alternate stylesheet" href="letra_grande.css" title="Letra Grande">
+
 </head>
 
 <body>
@@ -23,14 +24,17 @@
         <article class="a_logo">
           <a href="index.html"><img src="img/logo.png" alt="Logo"></a>
         </article>
+
         <article class="a_titulo">
           <h1>Pisos & Inmuebles</h1>
           <p>La llave de tu nuevo hogar está aquí</p>
         </article>
+
         <article class="a_identificarse">
-          <a class="btn" href="signup.html">Sign Up</a>
+          <a href="cuenta.html" class="icon-user-outline" title="Cuenta"></a>
         </article>
       </div>
+
     </section>
   </header>
 
@@ -41,30 +45,25 @@
 
   <main class="contenido">
     <section>
-      <fieldset>
-        <legend>Iniciar sesión</legend>
+      <h2>Mis anuncios</h2>
+      <div id="lista-anuncios" class="lista-anuncios"></div>
 
-        <form id="formLogin" action="index.html" method="post" novalidate>
-          <label for="usuario">Usuario</label><br>
-          <input type="text" id="usuario" name="usuario"><br>
-          <div id="errorUsuario" class="mensaje-error"></div>
-
-          <label for="password">Contraseña</label><br>
-          <input type="password" id="password" name="password"><br>
-          <div id="errorPassword" class="mensaje-error"></div><br>
-
-          <button type="submit" class="button">Acceder</button>
-          <a href="signup.html" class="enlaces">Crear cuenta</a>
-        </form>
-      </fieldset>
+      <article>
+        <div class="imagen_principal">
+          <img src="img/foto_piso.jpg" alt="Piso en Madrid centro">
+        </div>
+        <h4>Piso en Madrid centro</h4>
+        <p>Vivienda luminosa y moderna con 3 habitaciones, 2 baños y balcón con vistas al centro.</p>
+        <p><a class="enlaces" href="detalle_anuncio.html">Ver detalle</a></p>
+      </article>
+      
     </section>
   </main>
 
   <footer>
-    <p>Lucía Vidal Ortiz &amp; Miriam Mendiola Soriano</p>
-    <p>&copy; 2025 Pisos &amp; Inmuebles</p>
+    <p>Lucía Vidal Ortiz & Miriam Mendiola Soriano</p>
+    <p>&copy; 2025 Pisos & Inmuebles</p>
   </footer>
-
-  <script src="login.js"></script>
 </body>
+
 </html>

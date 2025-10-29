@@ -1,0 +1,54 @@
+<?php
+$title = "Inicio";
+require_once("cabecera.inc");
+require_once("inicio.inc");
+?>
+
+<!-- A partir de aquí, todo tu contenido debe estar dentro del <main class="contenido"> -->
+<section>
+  <h3>¿Quieres hacer una búsqueda más concreta y completa?</h3>
+  <form action="f.busqueda.php" method="get">
+    <button type="submit" class="button">Búsqueda completa</button>
+  </form>
+</section>
+
+<section>
+  <h3>Búsqueda rápida</h3>
+  <form action="resultado.php" method="get">
+    <label>
+      Ciudad:
+      <input type="text" name="ciudad_rapida" placeholder="Ciudad">
+    </label>
+    <button type="submit" class="button">Buscar</button>
+  </form>
+</section>
+
+
+<section>
+  <h3>Últimos anuncios publicados</h3>
+
+  <article>
+    <div class="imagen_principal">
+      <img src="img/foto_piso.jpg" alt="Piso en Madrid centro">
+    </div>
+    <h4>Piso en Madrid centro</h4>
+    <p>Vivienda luminosa y moderna con 3 habitaciones, 2 baños y balcón con vistas al centro.</p>
+    <p><a class="enlaces" href="detalle_anuncio.php">Ver detalle</a></p>
+  </article>
+
+  <article>
+    <div class="imagen_principal">
+      <img src="img/foto_piso1.jpg" alt="Apartamento en París">
+    </div>
+    <h4>Apartamento en París</h4>
+    <p>Acogedor apartamento en el corazón de París, ideal para parejas o estancias cortas.</p>
+    <p><a class="enlaces" href="detalle_anuncio.php">Ver detalle</a></p>
+  </article>
+</section>
+
+<!-- Cerramos el main ANTES del footer -->
+</main>
+
+<?php
+require_once("footer.inc");
+?>
