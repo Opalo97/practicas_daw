@@ -5,7 +5,7 @@ require_once("inicio.inc");
 
 // Mostrar nombre del usuario si viene desde control_acceso.php
 if (isset($_GET['usuario'])) {
-    echo "<p style='text-align:right; padding:10px;'>Bienvenido/a, <strong>" . htmlspecialchars($_GET['usuario'], ENT_QUOTES, 'UTF-8') . "</strong></p>";
+    echo "<h3 style='text-align:right; padding:10px;'>Bienvenido/a, <strong>" . htmlspecialchars($_GET['usuario'], ENT_QUOTES, 'UTF-8') . "</strong></h3>";
 }
 ?>
 
@@ -17,17 +17,16 @@ if (isset($_GET['usuario'])) {
   </form>
 </section>
 
+<!-- Búsqueda rápida -->
 <section>
   <h3>Búsqueda rápida</h3>
   <form action="resultado.php" method="get">
-    <label>
-      Ciudad:
+    <label>Ciudad:
       <input type="text" name="ciudad_rapida" placeholder="Ciudad">
     </label>
     <button type="submit" class="button">Buscar</button>
   </form>
 </section>
-
 
 <section>
   <h3>Últimos anuncios publicados</h3>
@@ -65,7 +64,7 @@ if (isset($_GET['usuario'])) {
     </div>
     <h4>Ático en Lisboa</h4>
     <p>Elegante ático con vistas al río Tajo, terraza privada y excelente iluminación natural.</p>
-    <p><a class="enlaces" href="detalle_anuncio.php?id=2>Ver detalle</a></p>
+    <p><a class="enlaces" href="detalle_anuncio.php?id=2">Ver detalle</a></p>
   </article>
 
   <article>
@@ -78,7 +77,6 @@ if (isset($_GET['usuario'])) {
   </article>
 </section>
 
-<!-- Cerramos el main ANTES del footer -->
 </main>
 
 <?php

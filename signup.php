@@ -4,10 +4,26 @@ require_once("cabecera.inc");
 require_once("inicio2.inc");
 ?>
 
+<?php if (isset($_GET['error'])): ?>
+<div class="mensaje-error" >
+  <p><strong>Errores detectados:</strong></p>
+  <ul>
+    <?php
+      $mensajes = explode("||", urldecode($_GET['error']));
+      foreach ($mensajes as $msg) {
+        echo "<li>" . htmlspecialchars($msg) . "</li>";
+      }
+    ?>
+  </ul>
+</div>
+<?php endif; ?>
+
 <section>
   <article>
 
-    <form id="formRegistro" class="form-registro" action="index.php" method="post" enctype="multipart/form-data" novalidate>
+
+    <form id="formRegistro" class="form-registro" action="respuesta_registro.php" method="post" enctype="multipart/form-data" novalidate>
+
       <fieldset>
         <legend>Datos de acceso</legend>
 

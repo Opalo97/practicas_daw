@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
       erroresDiv.innerHTML = "<ul><li>" + errores.join("</li><li>") + "</li></ul>";
       erroresDiv.style.color = "red";
     } else {
-      alert("Registro exitoso");
+      
       form.submit();
     }
   });
