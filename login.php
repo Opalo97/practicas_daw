@@ -8,9 +8,32 @@ require_once("inicio2.inc");
   <fieldset>
     <legend>Iniciar sesión</legend>
 
-    <form id="formLogin" action="index.php" method="post" novalidate>
+    <?php
+    // Mensajes de error recibidos por GET
+    if (isset($_GET['error'])) {
+        $err = $_GET['error'];
+        if ($err === 'vacio') {
+            echo "<p class='mensaje-error'>Por favor, rellena ambos campos.</p>";
+        } elseif ($err === 'credenciales') {
+            echo "<p class='mensaje-error'>Usuario o contraseña incorrectos.</p>";
+        } elseif ($err === 'espacios') {
+            echo "<p class='mensaje-error'>Los campos no pueden contener solo espacios o tabuladores.</p>";
+        } else {
+            echo "<p class='mensaje-error'>Error desconocido.</p>";
+        }
+    }
+
+    // Reponer el usuario en caso de error (no reponer la contraseña por seguridad)
+    $valorUsuario = '';
+    if (isset($_GET['user'])) {
+        $valorUsuario = htmlspecialchars($_GET['user'], ENT_QUOTES, 'UTF-8');
+    }
+    ?>
+
+    <!-- novalidate para desactivar validación HTML5 (la validación la hará PHP) -->
+    <form id="formLogin" action="control_acceso.php" method="post" novalidate>
       <label for="usuario">Usuario</label><br>
-      <input type="text" id="usuario" name="usuario"><br>
+      <input type="text" id="usuario" name="usuario" value="<?php echo $valorUsuario; ?>"><br>
       <div id="errorUsuario" class="mensaje-error"></div>
 
       <label for="password">Contraseña</label><br>
@@ -29,4 +52,4 @@ require_once("inicio2.inc");
 require_once("footer.inc");
 ?>
 
-<script src="login.js"></script>
+<!-- <script src="login.js"></script>-->

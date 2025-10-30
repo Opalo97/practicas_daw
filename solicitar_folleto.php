@@ -14,6 +14,7 @@ require_once("inicio.inc");
   </p>
 </section>
 
+<!-- Tabla de tarifas -->
 <section aria-labelledby="tarifas">
   <h3 id="tarifas">Tarifas</h3>
   <table>
@@ -36,10 +37,58 @@ require_once("inicio.inc");
   </table>
 </section>
 
+<!-- Tabla PHP de costes -->
 <section aria-labelledby="tarifas">
-  <h3>Tabla de posibles costes del folleto</h3>
+  <h3 id="tarifas">Tabla de posibles costes del folleto</h3>
   <button id="mostrarTabla" class="button">Mostrar tabla</button>
-  <div id="contenedorTabla" style="display:none; margin-top:1em;"></div>
+  
+  <div id="contenedorTabla" style="display:none; margin-top:1em;">
+    <?php
+    // Tarifas
+    $coste_envio = 10;
+    $precio_color = 0.5;
+    $precio_res_alta = 0.2;
+
+    // Crear tabla
+    echo "<table>";
+    echo "<thead><tr><th>Páginas</th><th>Nº fotos</th><th>B/N 150–300 dpi</th><th>B/N >300 dpi</th><th>Color 150–300 dpi</th><th>Color >300 dpi</th></tr></thead>";
+    echo "<tbody>";
+
+    for($paginas=1; $paginas<=15; $paginas++) {
+        $fotos = $paginas * 3;
+
+        echo "<tr>";
+        echo "<td>$paginas</td>";
+        echo "<td>$fotos</td>";
+
+        if($paginas < 5) {
+            $precio_pagina = 2.0;
+        } elseif($paginas <= 10) {
+            $precio_pagina = 1.8;
+        } else {
+            $precio_pagina = 1.6;
+        }
+
+        $combinaciones = [
+            ['color'=>false,'altaRes'=>false],
+            ['color'=>false,'altaRes'=>true],
+            ['color'=>true,'altaRes'=>false],
+            ['color'=>true,'altaRes'=>true],
+        ];
+
+        foreach($combinaciones as $comb) {
+            $coste = $coste_envio + $paginas*$precio_pagina;
+            if($comb['color']) $coste += $fotos*$precio_color;
+            if($comb['altaRes']) $coste += $fotos*$precio_res_alta;
+            echo "<td>".number_format($coste,2)." €</td>";
+        }
+
+        echo "</tr>";
+    }
+
+    echo "</tbody></table>";
+    ?>
+  </div>
 </section>
 
 <section aria-labelledby="formulario">

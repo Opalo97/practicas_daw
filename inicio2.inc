@@ -13,8 +13,8 @@
         </article>
 
         <article class="a_identificarse">
-          <a class="btn" href="signup.html">Sign Up</a>
-          <a class="btn" href="login.html">Log In</a>
+          <a class="btn" href="signup.php">Sign Up</a>
+          <a class="btn" href="login.php">Log In</a>
         </article>
       </div>
     </section>

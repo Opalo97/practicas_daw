@@ -1,89 +1,72 @@
 <?php
-$title = "Piso luminoso en el centro";
+$title = "Detalle del anuncio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+
+// Cargamos los anuncios desde un fichero PHP que devuelve un array asociativo
+$anuncios = require("anuncios.php"); // por ejemplo: anuncios[1] y anuncios[2]
+
+// Obtenemos el ID del anuncio de la URL
+$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+// Elegimos el anuncio según si el ID es par o impar
+if ($id % 2 == 0) {
+    $anuncio = $anuncios[2]; // Anuncio para ID par
+} else {
+    $anuncio = $anuncios[1]; // Anuncio para ID impar
+}
 ?>
 
 <article>
-
   <div class="imagenes">
     <div class="imagen_principal">
-      <img src="img/piso.jpg" alt="Foto principal del piso">
+      <img src="<?php echo $anuncio['foto_principal']; ?>" alt="Foto principal del anuncio">
     </div>
-
     <div class="imagen_secundaria">
-      <img src="img/piso1.jpg" alt="Foto adicional del piso">
-      <img src="img/piso3.jpg" alt="Foto adicional del piso">
+      <?php foreach ($anuncio['fotos_secundarias'] as $foto): ?>
+        <img src="<?php echo $foto; ?>" alt="Foto adicional">
+      <?php endforeach; ?>
     </div>
   </div>
 
-  <!-- DESCRIPCIÓN -->
   <fieldset>
     <legend>Descripción</legend>
     <dl>
       <dt>Tipo de anuncio</dt>
-      <dd>Alquiler</dd>
-
+      <dd><?php echo $anuncio['tipo_anuncio']; ?></dd>
       <dt>Tipo de vivienda</dt>
-      <dd>Vivienda</dd>
-
+      <dd><?php echo $anuncio['tipo_vivienda']; ?></dd>
       <dt>Detalles</dt>
-      <dd>
-        Vivienda reformada con 3 habitaciones y 2 baños. Salón-comedor con salida a balcón, cocina
-        equipada y orientación sur. Finca con ascensor. Ideal para entrar a vivir.
-      </dd>
+      <dd><?php echo $anuncio['detalles']; ?></dd>
     </dl>
   </fieldset>
 
-  <!-- INFORMACIÓN DEL ANUNCIO -->
   <fieldset>
     <legend>Información del anuncio</legend>
     <dl>
       <dt>Fecha de publicación</dt>
-      <dd><time datetime="2025-05">05/2025</time></dd>
-
+      <dd><?php echo $anuncio['fecha']; ?></dd>
       <dt>Ciudad</dt>
-      <dd>Alicante</dd>
-
+      <dd><?php echo $anuncio['ciudad']; ?></dd>
       <dt>País</dt>
-      <dd>España</dd>
-
+      <dd><?php echo $anuncio['pais']; ?></dd>
       <dt>Precio</dt>
-      <dd>235.000 €</dd>
-
+      <dd><?php echo $anuncio['precio']; ?></dd>
       <dt>Propietario</dt>
-      <dd>User</dd>
+      <dd><?php echo $anuncio['propietario']; ?></dd>
     </dl>
   </fieldset>
 
-  <!-- CARACTERÍSTICAS -->
   <fieldset>
     <legend>Características</legend>
     <dl>
-      <dt>Superficie</dt>
-      <dd>95 m²</dd>
-
-      <dt>Habitaciones</dt>
-      <dd>3</dd>
-
-      <dt>Baños</dt>
-      <dd>2</dd>
-
-      <dt>Planta</dt>
-      <dd>4ª</dd>
-
-      <dt>Año de construcción</dt>
-      <dd>2008</dd>
-
-      <dt>Ascensor</dt>
-      <dd>Sí</dd>
-
-      <dt>Balcón</dt>
-      <dd>Sí</dd>
+      <?php foreach ($anuncio['caracteristicas'] as $clave => $valor): ?>
+        <dt><?php echo $clave; ?></dt>
+        <dd><?php echo $valor; ?></dd>
+      <?php endforeach; ?>
     </dl>
   </fieldset>
 
-  <!-- CTA -->
   <fieldset>
     <legend>¿Interesado?</legend>
     <p>
