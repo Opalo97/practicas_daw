@@ -1,60 +1,66 @@
 <?php
-// control_acceso.php
-// Recibe POST desde login.php y valida los campos y credenciales.
-// No usa sesiones (requisito de la práctica).
 
-// Recoger valores originales (sin trim) para permitir devolver el usuario en caso de error
-$raw_usuario = isset($_POST['usuario']) ? $_POST['usuario'] : null;
-$raw_password = isset($_POST['password']) ? $_POST['password'] : null;
+ob_start();
+session_start();
 
-// Si no vienen por POST, redirigimos al login (evita accesos directos)
+// Recoger valores originales (sin trim) para devolver usuario en caso de error
+$raw_usuario  = $_POST['usuario'] ?? null;
+$raw_password = $_POST['password'] ?? null;
+
+// Si no vienen por POST, redirigimos al login (acceso directo no permitido)
 if ($raw_usuario === null || $raw_password === null) {
     header("Location: login.php");
     exit;
 }
 
-// Trim para comprobar contenido real
-$usuario = trim($raw_usuario);
+// Limpiar entradas
+$usuario  = trim($raw_usuario);
 $password = trim($raw_password);
+$recordarme = isset($_POST['recordarme']); // checkbox
 
-// 1) Comprobar que no estén vacíos (después de trim)
-// Esto evita campos vacíos y también entradas que sean solo espacios/tabuladores/newlines
+// Validar campos vacíos o con solo espacios
 if ($usuario === '' || $password === '') {
-    // Devolvemos también el usuario original sin espacios al GET para rellenar el campo
-    $user_for_get = urlencode($usuario);
-    header("Location: login.php?error=vacio&user={$user_for_get}");
+    header("Location: login.php?error=vacio&user=" . urlencode($usuario));
     exit;
 }
 
-// Nota: la comprobación anterior ya cubre "solo espacios o tabuladores" porque trim() convierte eso en ''.
-// Si por alguna razón quieres detectar estrictamente solo espacios/tab, se podría usar una regex sobre raw values.
-
-// 2) Cargar lista de usuarios válidos
-// usuarios.php devuelve un array con los usuarios permitidos
+// Cargar lista de usuarios válidos
 $usuarios_validos = include("usuarios.php");
 if (!is_array($usuarios_validos)) {
-    // Error en fichero de usuarios
     header("Location: login.php?error=credenciales");
     exit;
 }
 
-// 3) Comparar credenciales
+// Verificar credenciales
 $autenticado = false;
 foreach ($usuarios_validos as $u) {
-    // Comparación exacta (sensible a mayúsculas/minúsculas)
     if ($u['usuario'] === $usuario && $u['password'] === $password) {
         $autenticado = true;
         break;
     }
 }
 
-// 4) Redirecciones según resultado
+// Acciones según resultado
 if ($autenticado) {
-    // Éxito: redirige al menú privado. Pasamos el nombre de usuario en GET para mostrar bienvenida.
-    header("Location: index.php?usuario=" . urlencode($usuario));
+    // Crear variable de sesión
+    $_SESSION['usuario'] = $usuario;
+
+    // Si el usuario marcó "recordarme"
+    if ($recordarme) {
+        $duracion = time() + (90 * 24 * 60 * 60); // 90 días
+        setcookie('usuario', $usuario, $duracion, '/', '', false, true);
+        setcookie('password', $password, $duracion, '/', '', false, true);
+    } else {
+        // Borrar cookies antiguas si existen
+        setcookie('usuario', '', time() - 3600, '/');
+        setcookie('password', '', time() - 3600, '/');
+    }
+
+    // Redirigir al área privada (puedes cambiar por tu index privado)
+    header("Location: index.php");
     exit;
 } else {
-    // Credenciales incorrectas: redirige al login con mensaje y reponer usuario
+    // Credenciales incorrectas
     header("Location: login.php?error=credenciales&user=" . urlencode($usuario));
     exit;
 }

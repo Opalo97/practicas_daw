@@ -1,15 +1,53 @@
 <?php
+ob_start();
+session_start();
+
 $title = "Inicio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 
-// Mostrar nombre del usuario si viene desde control_acceso.php
-if (isset($_GET['usuario'])) {
-    echo "<h3 style='text-align:right; padding:10px;'>Bienvenido/a, <strong>" . htmlspecialchars($_GET['usuario'], ENT_QUOTES, 'UTF-8') . "</strong></h3>";
+ 
+// CONTROL DE ACCESO
+ 
+if (!isset($_SESSION['usuario'])) {
+    // Si no hay sesión, intentar restaurarla con cookies válidas
+    if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
+        $usuarios_validos = include("usuarios.php");
+        foreach ($usuarios_validos as $u) {
+            if ($u['usuario'] === $_COOKIE['usuario'] && $u['password'] === $_COOKIE['password']) {
+                $_SESSION['usuario'] = $u['usuario'];
+                break;
+            }
+        }
+    }
 }
+
+// Si sigue sin haber sesión, redirigir parte publica
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index_no.php");
+    exit;
+}
+
+ 
+// saludo al usuario que toca
+ 
+$usuario = htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8');
+$hora = date("H");
+if ($hora >= 6 && $hora < 12) {
+    $saludo = "Buenos días";
+} elseif ($hora >= 12 && $hora < 16) {
+    $saludo = "Hola";
+} elseif ($hora >= 16 && $hora < 20) {
+    $saludo = "Buenas tardes";
+} else {
+    $saludo = "Buenas noches";
+}
+
+// Mostrar saludo
+echo "<h3 style='text-align:right; padding:10px;'>{$saludo}, <strong>{$usuario}</strong></h3>";
 ?>
 
-<!-- A partir de aquí, todo tu contenido debe estar dentro del <main class="contenido"> -->
+
 <section>
   <h3>¿Quieres hacer una búsqueda más concreta y completa?</h3>
   <form action="f.busqueda.php" method="get">

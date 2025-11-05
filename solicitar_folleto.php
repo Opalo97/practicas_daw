@@ -212,4 +212,4 @@ require_once("inicio.inc");
 require_once("footer.inc");
 ?>
 
-<script src="solicitar-folleto.js"></script>
+

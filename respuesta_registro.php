@@ -1,9 +1,5 @@
 <?php
-// ==========================================
-// RESPUESTA FORMULARIO DE REGISTRO
-// ==========================================
-
-// Desactivamos los warnings por campos vacíos opcionales
+// Desactiva warnings por campos vacíos opcionales
 error_reporting(E_ALL & ~E_NOTICE);
 
 // Recogemos los valores del formulario
@@ -16,9 +12,9 @@ $fecha = isset($_POST['fecha']) ? $_POST['fecha'] : "";
 $ciudad = isset($_POST['ciudad']) ? trim($_POST['ciudad']) : "";
 $pais = isset($_POST['pais']) ? $_POST['pais'] : "";
 
-// ==========================================
-// VALIDACIONES BÁSICAS
-// ==========================================
+ 
+// validacioness
+ 
 $errores = [];
 
 if ($usuario === "" || ctype_space($usuario)) {
@@ -37,9 +33,9 @@ if ($clave !== "" && $clave2 !== "" && $clave !== $clave2) {
   $errores[] = "Las contraseñas no coinciden.";
 }
 
-// ==========================================
+ 
 // SI HAY ERRORES → REDIRECCIÓN A signup.php
-// ==========================================
+ 
 if (!empty($errores)) {
   // Codificamos los mensajes de error como query string
   $errorString = urlencode(implode("||", $errores));
@@ -47,9 +43,9 @@ if (!empty($errores)) {
   exit();
 }
 
-// ==========================================
+ 
 // SI TODO ESTÁ CORRECTO → MOSTRAR CONFIRMACIÓN
-// ==========================================
+ 
 $title = "Confirmación de registro";
 require_once("cabecera.inc");
 require_once("inicio.inc");

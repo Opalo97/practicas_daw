@@ -89,5 +89,4 @@ require_once("inicio2.inc");
 require_once("footer.inc");
 ?>
 
-<!-- JS -->
-<script src="registro.js"></script>
+
