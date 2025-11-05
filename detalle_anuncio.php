@@ -1,31 +1,54 @@
 <?php
+ob_start();
+session_start();
+
 $title = "Detalle del anuncio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 
-// Cargamos los anuncios desde un fichero PHP que devuelve un array asociativo
-$anuncios = require("anuncios.php"); // por ejemplo: anuncios[1] y anuncios[2]
+// ====================================
+// COMPROBAR PÁGINA DE ORIGEN (referer)
+// ====================================
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $pagina_anterior = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
+    // Si viene desde index_no.php → acceso desde la parte pública
+    if ($pagina_anterior === 'index_no.php') {
+        header("Location: aviso.php");
+        exit;
+    }
+}
 
-// Obtenemos el ID del anuncio de la URL
-$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+// ====================================
+// CONTROL DE ACCESO: solo usuarios registrados
+// ====================================
+if (!isset($_SESSION['usuario'])) {
+    // Intentar restaurar sesión con cookies válidas
+    if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
+        $usuarios_validos = include("usuarios.php");
+        foreach ($usuarios_validos as $u) {
+            if ($u['usuario'] === $_COOKIE['usuario'] && $u['password'] === $_COOKIE['password']) {
+                $_SESSION['usuario'] = $u['usuario'];
+                break;
+            }
+        }
+    }
+}
 
-// Elegimos el anuncio según si el ID es par o impar
-if ($id % 2 == 0) {
-    $anuncio = $anuncios[2]; // Anuncio para ID par
-} else {
-    $anuncio = $anuncios[1]; // Anuncio para ID impar
+// Si sigue sin haber sesión → redirigir al aviso
+if (!isset($_SESSION['usuario'])) {
+    header("Location: aviso.php");
+    exit;
 }
 ?>
 
 <article>
   <div class="imagenes">
     <div class="imagen_principal">
-      <img src="<?php echo $anuncio['foto_principal']; ?>" alt="Foto principal del anuncio">
+      <img src="img/foto_piso.jpg" alt="Foto principal del anuncio">
     </div>
     <div class="imagen_secundaria">
-      <?php foreach ($anuncio['fotos_secundarias'] as $foto): ?>
-        <img src="<?php echo $foto; ?>" alt="Foto adicional">
-      <?php endforeach; ?>
+      <img src="img/foto_piso1.jpg" alt="Foto adicional 1">
+      <img src="img/foto_piso2.jpg" alt="Foto adicional 2">
     </div>
   </div>
 
@@ -33,11 +56,11 @@ if ($id % 2 == 0) {
     <legend>Descripción</legend>
     <dl>
       <dt>Tipo de anuncio</dt>
-      <dd><?php echo $anuncio['tipo_anuncio']; ?></dd>
+      <dd>Venta</dd>
       <dt>Tipo de vivienda</dt>
-      <dd><?php echo $anuncio['tipo_vivienda']; ?></dd>
+      <dd>Piso</dd>
       <dt>Detalles</dt>
-      <dd><?php echo $anuncio['detalles']; ?></dd>
+      <dd>Vivienda luminosa y moderna con 3 habitaciones, 2 baños y balcón con vistas al centro.</dd>
     </dl>
   </fieldset>
 
@@ -45,25 +68,29 @@ if ($id % 2 == 0) {
     <legend>Información del anuncio</legend>
     <dl>
       <dt>Fecha de publicación</dt>
-      <dd><?php echo $anuncio['fecha']; ?></dd>
+      <dd>05/11/2025</dd>
       <dt>Ciudad</dt>
-      <dd><?php echo $anuncio['ciudad']; ?></dd>
+      <dd>Madrid</dd>
       <dt>País</dt>
-      <dd><?php echo $anuncio['pais']; ?></dd>
+      <dd>España</dd>
       <dt>Precio</dt>
-      <dd><?php echo $anuncio['precio']; ?></dd>
+      <dd>280.000 €</dd>
       <dt>Propietario</dt>
-      <dd><?php echo $anuncio['propietario']; ?></dd>
+      <dd>Juan Pérez</dd>
     </dl>
   </fieldset>
 
   <fieldset>
     <legend>Características</legend>
     <dl>
-      <?php foreach ($anuncio['caracteristicas'] as $clave => $valor): ?>
-        <dt><?php echo $clave; ?></dt>
-        <dd><?php echo $valor; ?></dd>
-      <?php endforeach; ?>
+      <dt>Habitaciones</dt>
+      <dd>3</dd>
+      <dt>Baños</dt>
+      <dd>2</dd>
+      <dt>Superficie</dt>
+      <dd>120 m²</dd>
+      <dt>Terraza</dt>
+      <dd>Sí</dd>
     </dl>
   </fieldset>
 
