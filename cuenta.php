@@ -20,5 +20,6 @@ require_once("inicio.inc");
 </main>
 
 <?php
+require_once("panel_ultimos_anuncios.php");
 require_once("footer.inc");
 ?>

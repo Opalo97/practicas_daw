@@ -118,5 +118,6 @@ echo "<h3 style='text-align:right; padding:10px;'>{$saludo}, <strong>{$usuario}<
 </main>
 
 <?php
+require_once("panel_ultimos_anuncios.php");
 require_once("footer.inc");
 ?>

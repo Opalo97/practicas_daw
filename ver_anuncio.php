@@ -2,6 +2,40 @@
 $title = "Ver detalles de mi anuncio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+
+
+
+// guarda el anuncio en el panel de ultimos anuncios visitados
+
+$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+$max_anuncios = 4;
+$cookie_name = "ultimos_anuncios";
+$anuncios = require("anuncios.php");
+
+if (!isset($anuncios[$id])) {
+    $id = 1;
+}
+
+$anuncio_actual = [
+    'id' => $id,
+    'foto' => $anuncios[$id]['foto_principal'],
+    'tipo_vivienda' => $anuncios[$id]['tipo_vivienda'],
+    'ciudad' => $anuncios[$id]['ciudad'],
+    'pais' => $anuncios[$id]['pais'],
+    'precio' => $anuncios[$id]['precio'],
+    'pagina' => 'ver' // 👈 marca este como anuncio propio
+];
+
+$ultimos = isset($_COOKIE[$cookie_name]) ? json_decode($_COOKIE[$cookie_name], true) : [];
+$ultimos = array_filter($ultimos, function($a) use ($id) {
+    // Si no existe la clave 'pagina', lo tratamos como diferente
+    return $a['id'] != $id || (!isset($a['pagina']) || $a['pagina'] != 'ver');
+});
+
+array_unshift($ultimos, $anuncio_actual);
+$ultimos = array_slice($ultimos, 0, $max_anuncios);
+setcookie($cookie_name, json_encode($ultimos), time() + 7 * 24 * 60 * 60, '/', '', false, true);
+
 ?>
 
 <article>

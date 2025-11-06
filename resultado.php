@@ -70,5 +70,6 @@ $fecha = isset($_GET['fecha']) ? $_GET['fecha'] : 'No especificado';
 </main>
 
 <?php
+require_once("panel_ultimos_anuncios.php");
 require_once("footer.inc");
 ?>

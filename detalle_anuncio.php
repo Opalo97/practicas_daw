@@ -6,9 +6,9 @@ $title = "Detalle del anuncio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 
-// ====================================
-// COMPROBAR PÁGINA DE ORIGEN (referer)
-// ====================================
+ 
+// comprobar si pagina anterior = index_no
+ 
 if (isset($_SERVER['HTTP_REFERER'])) {
     $pagina_anterior = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
     // Si viene desde index_no.php → acceso desde la parte pública
@@ -18,11 +18,11 @@ if (isset($_SERVER['HTTP_REFERER'])) {
     }
 }
 
-// ====================================
-// CONTROL DE ACCESO: solo usuarios registrados
-// ====================================
+ 
+// solo usuarios registrados
+ 
 if (!isset($_SESSION['usuario'])) {
-    // Intentar restaurar sesión con cookies válidas
+    // restaurar sesión con cookies válidas
     if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
         $usuarios_validos = include("usuarios.php");
         foreach ($usuarios_validos as $u) {
@@ -34,11 +34,44 @@ if (!isset($_SESSION['usuario'])) {
     }
 }
 
-// Si sigue sin haber sesión → redirigir al aviso
+// si sigue sin haber sesión → redirigir a aviso
 if (!isset($_SESSION['usuario'])) {
     header("Location: aviso.php");
     exit;
 }
+
+
+// guarda el anuncio en el panel de ultimos anuncios visitados
+$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+$max_anuncios = 4; // guarda los 4 ultimos
+$cookie_name = "ultimos_anuncios";
+$anuncios = require("anuncios.php");
+
+// Obtener datos  del anuncio actual
+$anuncio_actual = [
+    'id' => $id,
+    'foto' => $anuncios[$id]['foto_principal'],
+    'tipo_vivienda' => $anuncios[$id]['tipo_vivienda'],
+    'ciudad' => $anuncios[$id]['ciudad'],
+    'pais' => $anuncios[$id]['pais'],
+    'precio' => $anuncios[$id]['precio']
+];
+
+// Leer cookie existente (si la hay)
+$ultimos = isset($_COOKIE[$cookie_name]) ? json_decode($_COOKIE[$cookie_name], true) : [];
+
+// Si este anuncio ya estaba, eliminarlo para evitar duplicados
+$ultimos = array_filter($ultimos, fn($a) => $a['id'] != $id);
+
+// Insertar el nuevo al principio
+array_unshift($ultimos, $anuncio_actual);
+
+// Limitar a 4 elementos
+$ultimos = array_slice($ultimos, 0, $max_anuncios);
+
+// Guardar cookie (1 semana)
+setcookie($cookie_name, json_encode($ultimos), time() + 7 * 24 * 60 * 60, '/', '', false, true);
+
 ?>
 
 <article>
