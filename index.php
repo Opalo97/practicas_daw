@@ -7,6 +7,7 @@ require_once("cabecera.inc");
 require_once("inicio.inc");
 
 // ---------- CONTROL DE ACCESO / RESTAURACIÓN DESDE COOKIES ----------
+
 $restaurado_por_cookie = false;
 
 if (!isset($_SESSION['usuario'])) {
@@ -15,12 +16,8 @@ if (!isset($_SESSION['usuario'])) {
         if (is_array($usuarios_validos)) {
             foreach ($usuarios_validos as $u) {
                 if ($u['usuario'] === $_COOKIE['usuario'] && $u['password'] === $_COOKIE['password']) {
-                    // Inicio de sesión automático porque las cookies coinciden con un usuario válido
+                    // Restauramos sesión automáticamente
                     $_SESSION['usuario'] = $u['usuario'];
-                    // establecer estilo desde cookie si existe, si no desde datos de usuario
-                    $_SESSION['estilo']  = $_COOKIE['estilo'] ?? ($u['estilo'] ?? 'basic.css');
-                    // Si control_acceso.php guardó la última visita anterior en la sesión, la tendremos aquí
-                    // Si no, la tendremos en la cookie 'ultima_visita' (de login anterior)
                     $restaurado_por_cookie = true;
                     break;
                 }
@@ -29,42 +26,13 @@ if (!isset($_SESSION['usuario'])) {
     }
 }
 
-// Si sigue sin haber sesión, redirigir a la parte pública
+// Si no hay sesión válida, redirigir a la parte pública
 if (!isset($_SESSION['usuario'])) {
     header("Location: index_no.php");
     exit;
 }
 
-// ---------- APLICAR ESTILO DEL USUARIO (de sesión o cookie) ----------
-$estilo = $_SESSION['estilo'] ?? ($_COOKIE['estilo'] ?? 'basic.css');
-
-// ---------- SI HEMOS RESTAURADO POR COOKIE: MOSTRAR ÚLTIMA VISITA ----------
-// Buscamos la última visita primero en sesión (si control_acceso puso ahí el valor anterior),
-// y si no existe, en la cookie 'ultima_visita' (guardada en el login anterior).
-if ($restaurado_por_cookie) {
-    $ultima_para_mostrar = null;
-
-    if (isset($_SESSION['ultima_visita']) && $_SESSION['ultima_visita']) {
-        $ultima_para_mostrar = $_SESSION['ultima_visita'];
-        // opcional: borrarla de la sesión para que no se muestre repetidamente
-        unset($_SESSION['ultima_visita']);
-    } elseif (isset($_COOKIE['ultima_visita']) && $_COOKIE['ultima_visita']) {
-        $ultima_para_mostrar = $_COOKIE['ultima_visita'];
-    }
-
-    if ($ultima_para_mostrar !== null) {
-        $ultima = htmlspecialchars($ultima_para_mostrar, ENT_QUOTES, 'UTF-8');
-        echo "<p style='text-align:right; margin:10px; font-style:italic;'>
-                Bienvenido de nuevo, <strong>" . htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8') . "</strong>.
-                Tu última visita fue el {$ultima}.
-              </p>";
-    }
-
-    // Actualizar cookie de última visita al momento actual (no renovar cookies 'usuario'/'password')
-    setcookie('ultima_visita', date('d/m/Y H:i:s'), time() + (90 * 24 * 60 * 60), '/', '', false, true);
-}
-
-// ---------- SALUDO SEGÚN FRANJA HORARIA ----------
+// ---------- MENSAJE DE SALUDO SEGÚN HORA ----------
 $usuario = htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8');
 $hora = intval(date("H"));
 if ($hora >= 6 && $hora < 12) {
@@ -77,10 +45,26 @@ if ($hora >= 6 && $hora < 12) {
     $saludo = "Buenas noches";
 }
 
-// Mostrar saludo (en la parte superior derecha)
-echo "<h3 style='text-align:right; padding:10px;'>{$saludo}, <strong>{$usuario}</strong></h3>";
-?>
+// ---------- MOSTRAR ÚLTIMA VISITA (solo si restaurado por cookie) ----------
+if ($restaurado_por_cookie) {
+    if (isset($_COOKIE['ultima_visita'])) {
+        $ultima = htmlspecialchars($_COOKIE['ultima_visita'], ENT_QUOTES, 'UTF-8');
+        echo "<p style='text-align:right; margin:10px; font-style:italic;'>
+                $saludo, <strong>$usuario</strong>. Tu última visita fue el <strong>$ultima</strong>.
+              </p>";
+    } else {
+        echo "<p style='text-align:right; margin:10px; font-style:italic;'>
+                $saludo, <strong>$usuario</strong>. Esta es tu primera visita recordada.
+              </p>";
+    }
 
+    // Actualizar cookie para la próxima visita
+    setcookie('ultima_visita', date('d/m/Y H:i:s'), time() + (90 * 24 * 60 * 60), '/', '', false, true);
+} else {
+    // Si no se restauró por cookie, solo mostrar saludo normal
+    echo "<h3 style='text-align:right; padding:10px;'>$saludo, <strong>$usuario</strong></h3>";
+}
+?>
 
 <section>
   <h3>¿Quieres hacer una búsqueda más concreta y completa?</h3>
