@@ -6,9 +6,8 @@ $title = "Detalle del anuncio";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 
- 
+
 // comprobar si pagina anterior = index_no
- 
 if (isset($_SERVER['HTTP_REFERER'])) {
     $pagina_anterior = basename(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH));
     // Si viene desde index_no.php → acceso desde la parte pública
@@ -18,9 +17,8 @@ if (isset($_SERVER['HTTP_REFERER'])) {
     }
 }
 
- 
+
 // solo usuarios registrados
- 
 if (!isset($_SESSION['usuario'])) {
     // restaurar sesión con cookies válidas
     if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
@@ -45,16 +43,27 @@ if (!isset($_SESSION['usuario'])) {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 1;
 $max_anuncios = 4; // guarda los 4 ultimos
 $cookie_name = "ultimos_anuncios";
+
+// Cargar datos de anuncios desde archivo externo (usa claves 1 y 2)
 $anuncios = require("anuncios.php");
 
-// Obtener datos  del anuncio actual
+// Seleccionar anuncio según si el id es par o impar
+// como tu anuncios.php usa claves numéricas 1 y 2, mapear a 1/2
+$key = ($id % 2 === 0) ? 2 : 1;
+if (!isset($anuncios[$key])) {
+    // fallback si algo falla
+    $key = 1;
+}
+$anuncio = $anuncios[$key];
+
+// Guardar en cookie de últimos anuncios (usar los datos del anuncio seleccionado)
 $anuncio_actual = [
     'id' => $id,
-    'foto' => $anuncios[$id]['foto_principal'],
-    'tipo_vivienda' => $anuncios[$id]['tipo_vivienda'],
-    'ciudad' => $anuncios[$id]['ciudad'],
-    'pais' => $anuncios[$id]['pais'],
-    'precio' => $anuncios[$id]['precio']
+    'foto' => $anuncio['foto_principal'],
+    'tipo_vivienda' => $anuncio['tipo_vivienda'] ?? ($anuncio['tipo_vivienda'] ?? ''),
+    'ciudad' => $anuncio['ciudad'],
+    'pais' => $anuncio['pais'],
+    'precio' => $anuncio['precio']
 ];
 
 // Leer cookie existente (si la hay)
@@ -77,11 +86,17 @@ setcookie($cookie_name, json_encode($ultimos), time() + 7 * 24 * 60 * 60, '/', '
 <article>
   <div class="imagenes">
     <div class="imagen_principal">
-      <img src="img/foto_piso.jpg" alt="Foto principal del anuncio">
+      <img src="<?= htmlspecialchars($anuncio['foto_principal'], ENT_QUOTES, 'UTF-8') ?>" alt="Foto principal del anuncio">
     </div>
     <div class="imagen_secundaria">
-      <img src="img/foto_piso1.jpg" alt="Foto adicional 1">
-      <img src="img/foto_piso2.jpg" alt="Foto adicional 2">
+      <?php
+      // tus anuncios usan 'fotos_secundarias'
+      if (!empty($anuncio['fotos_secundarias']) && is_array($anuncio['fotos_secundarias'])):
+          foreach ($anuncio['fotos_secundarias'] as $f): ?>
+            <img src="<?= htmlspecialchars($f, ENT_QUOTES, 'UTF-8') ?>" alt="Foto adicional">
+      <?php endforeach;
+      endif;
+      ?>
     </div>
   </div>
 
@@ -89,11 +104,11 @@ setcookie($cookie_name, json_encode($ultimos), time() + 7 * 24 * 60 * 60, '/', '
     <legend>Descripción</legend>
     <dl>
       <dt>Tipo de anuncio</dt>
-      <dd>Venta</dd>
+      <dd><?= htmlspecialchars($anuncio['tipo_anuncio'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>Tipo de vivienda</dt>
-      <dd>Piso</dd>
+      <dd><?= htmlspecialchars($anuncio['tipo_vivienda'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>Detalles</dt>
-      <dd>Vivienda luminosa y moderna con 3 habitaciones, 2 baños y balcón con vistas al centro.</dd>
+      <dd><?= htmlspecialchars($anuncio['detalles'], ENT_QUOTES, 'UTF-8') ?></dd>
     </dl>
   </fieldset>
 
@@ -101,29 +116,29 @@ setcookie($cookie_name, json_encode($ultimos), time() + 7 * 24 * 60 * 60, '/', '
     <legend>Información del anuncio</legend>
     <dl>
       <dt>Fecha de publicación</dt>
-      <dd>05/11/2025</dd>
+      <dd><?= htmlspecialchars($anuncio['fecha'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>Ciudad</dt>
-      <dd>Madrid</dd>
+      <dd><?= htmlspecialchars($anuncio['ciudad'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>País</dt>
-      <dd>España</dd>
+      <dd><?= htmlspecialchars($anuncio['pais'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>Precio</dt>
-      <dd>280.000 €</dd>
+      <dd><?= htmlspecialchars($anuncio['precio'], ENT_QUOTES, 'UTF-8') ?></dd>
       <dt>Propietario</dt>
-      <dd>Juan Pérez</dd>
+      <dd><?= htmlspecialchars($anuncio['propietario'], ENT_QUOTES, 'UTF-8') ?></dd>
     </dl>
   </fieldset>
 
   <fieldset>
     <legend>Características</legend>
     <dl>
-      <dt>Habitaciones</dt>
-      <dd>3</dd>
-      <dt>Baños</dt>
-      <dd>2</dd>
-      <dt>Superficie</dt>
-      <dd>120 m²</dd>
-      <dt>Terraza</dt>
-      <dd>Sí</dd>
+      <?php
+      if (!empty($anuncio['caracteristicas']) && is_array($anuncio['caracteristicas'])):
+        foreach ($anuncio['caracteristicas'] as $clave => $valor): ?>
+          <dt><?= htmlspecialchars($clave, ENT_QUOTES, 'UTF-8') ?></dt>
+          <dd><?= htmlspecialchars($valor, ENT_QUOTES, 'UTF-8') ?></dd>
+      <?php endforeach;
+      endif;
+      ?>
     </dl>
   </fieldset>
 

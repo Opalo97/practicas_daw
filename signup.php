@@ -2,18 +2,19 @@
 $title = "Registro de nuevo usuario";
 require_once("cabecera.inc");
 require_once("inicio2.inc");
+require_once("flashdata.php");
+
+session_start();
+$errores = get_flash('errores');
 ?>
 
-<?php if (isset($_GET['error'])): ?>
-<div class="mensaje-error" >
+<?php if ($errores): ?>
+<div class="mensaje-error">
   <p><strong>Errores detectados:</strong></p>
   <ul>
-    <?php
-      $mensajes = explode("||", urldecode($_GET['error']));
-      foreach ($mensajes as $msg) {
-        echo "<li>" . htmlspecialchars($msg) . "</li>";
-      }
-    ?>
+    <?php foreach ($errores as $msg): ?>
+      <li><?php echo htmlspecialchars($msg); ?></li>
+    <?php endforeach; ?>
   </ul>
 </div>
 <?php endif; ?>

@@ -13,7 +13,7 @@ require_once("inicio.inc");
     <li><a href="crear_anuncio.php">Crear un anuncio nuevo</a></li>
     <li><a href="mis_mensajes.php">Visualizar mis mensajes</a></li>
     <li><a href="solicitar_folleto.php">Solicitar folleto publicitario</a></li>
-    <li><a href="index_no.php">Salir</a></li>
+    <li><a href="logout.php">Salir</a></li>
   </ul>
 </section>
 

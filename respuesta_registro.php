@@ -1,46 +1,31 @@
 <?php
-// Desactiva warnings por campos vacíos opcionales
+require_once("flashdata.php");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 error_reporting(E_ALL & ~E_NOTICE);
 
-// Recogemos los valores del formulario
-$usuario = isset($_POST['usuario']) ? trim($_POST['usuario']) : "";
-$clave = isset($_POST['clave']) ? trim($_POST['clave']) : "";
-$clave2 = isset($_POST['clave2']) ? trim($_POST['clave2']) : "";
-$email = isset($_POST['email']) ? trim($_POST['email']) : "";
-$sexo = isset($_POST['sexo']) ? $_POST['sexo'] : "";
-$fecha = isset($_POST['fecha']) ? $_POST['fecha'] : "";
-$ciudad = isset($_POST['ciudad']) ? trim($_POST['ciudad']) : "";
-$pais = isset($_POST['pais']) ? $_POST['pais'] : "";
+$usuario = trim($_POST['usuario'] ?? "");
+$clave = trim($_POST['clave'] ?? "");
+$clave2 = trim($_POST['clave2'] ?? "");
+$email = trim($_POST['email'] ?? "");
+$sexo = $_POST['sexo'] ?? "";
+$fecha = $_POST['fecha'] ?? "";
+$ciudad = trim($_POST['ciudad'] ?? "");
+$pais = $_POST['pais'] ?? "";
 
- 
-// validacioness
- 
 $errores = [];
 
-if ($usuario === "" || ctype_space($usuario)) {
-  $errores[] = "El nombre de usuario es obligatorio.";
-}
+if ($usuario === "" || ctype_space($usuario)) $errores[] = "El nombre de usuario es obligatorio.";
+if ($clave === "" || ctype_space($clave)) $errores[] = "La contraseña es obligatoria.";
+if ($clave2 === "" || ctype_space($clave2)) $errores[] = "Debes repetir la contraseña.";
+if ($clave !== "" && $clave2 !== "" && $clave !== $clave2) $errores[] = "Las contraseñas no coinciden.";
 
-if ($clave === "" || ctype_space($clave)) {
-  $errores[] = "La contraseña es obligatoria.";
-}
-
-if ($clave2 === "" || ctype_space($clave2)) {
-  $errores[] = "Debes repetir la contraseña.";
-}
-
-if ($clave !== "" && $clave2 !== "" && $clave !== $clave2) {
-  $errores[] = "Las contraseñas no coinciden.";
-}
-
- 
-// SI HAY ERRORES → REDIRECCIÓN A signup.php
- 
 if (!empty($errores)) {
-  // Codificamos los mensajes de error como query string
-  $errorString = urlencode(implode("||", $errores));
-  header("Location: signup.php?error=" . $errorString);
-  exit();
+    set_flash('errores', $errores);
+    header("Location: signup.php");
+    exit();
 }
 
  
