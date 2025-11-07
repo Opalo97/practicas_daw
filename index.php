@@ -61,8 +61,16 @@ if ($restaurado_por_cookie) {
     // Actualizar cookie para la próxima visita
     setcookie('ultima_visita', date('d/m/Y H:i:s'), time() + (90 * 24 * 60 * 60), '/', '', false, true);
 } else {
-    // Si no se restauró por cookie, solo mostrar saludo normal
-    echo "<h3 style='text-align:right; padding:10px;'>$saludo, <strong>$usuario</strong></h3>";
+  // Mostrar saludo siempre
+  echo "<h3 style='text-align:right; padding:10px;'>$saludo, <strong>$usuario</strong></h3>";
+
+  // Mostrar última visita si la cookie existe (aunque no haya sido restaurado)
+  if (isset($_COOKIE['ultima_visita'])) {
+      $ultima = htmlspecialchars($_COOKIE['ultima_visita'], ENT_QUOTES, 'UTF-8');
+      echo "<p style='text-align:right; margin:10px; font-style:italic;'>
+              Tu última visita fue el <strong>$ultima</strong>.
+            </p>";
+  }
 }
 ?>
 

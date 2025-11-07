@@ -5,7 +5,9 @@ require_once("inicio2.inc");
 require_once("flashdata.php");
 
 ob_start();
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Si el usuario ya tiene cookie válida, redirigir
 if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
