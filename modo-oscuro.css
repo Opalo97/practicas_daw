@@ -660,3 +660,11 @@ main.contenido section > h2 {
     color: #121212;
     outline: 3px solid rgba(200,168,255,0.1);
 }
+
+/* Foto de perfil en perfil_usuario */
+.foto-perfil img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;  /* recorta sin deformar */
+  border-radius: 50%;
+}

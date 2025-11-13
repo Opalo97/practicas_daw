@@ -1,11 +1,68 @@
 <?php
+ob_start();
+session_start();
+
 $title = "Solicitar folleto publicitario impreso";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+require_once("bd.php");
+
+// ------------------------------------------------------
+// 1. Comprobar usuario logueado
+// ------------------------------------------------------
+if (!isset($_SESSION['usuario'])) {
+    header("Location: aviso.php");
+    exit;
+}
+
+$nombreUsuarioSesion = $_SESSION['usuario'];
+
+// ------------------------------------------------------
+// 2. Cargar datos del usuario (para saber su IdUsuario)
+// ------------------------------------------------------
+$mysqli = obtenerConexion();
+
+$nombreEsc = $mysqli->real_escape_string($nombreUsuarioSesion);
+
+$sqlUsuario = "SELECT IdUsuario, NomUsuario
+               FROM Usuarios
+               WHERE NomUsuario = '$nombreEsc'
+               LIMIT 1";
+
+$resUsu = $mysqli->query($sqlUsuario);
+
+if (!$resUsu || $resUsu->num_rows === 0) {
+    echo "<p>No se ha encontrado el usuario actual en la base de datos.</p>";
+    if ($resUsu) $resUsu->free();
+    $mysqli->close();
+    require_once("footer.inc");
+    exit;
+}
+
+$usuario = $resUsu->fetch_assoc();
+$resUsu->free();
+
+$idUsuario = (int)$usuario['IdUsuario'];
+
+// ------------------------------------------------------
+// 3. Cargar anuncios del usuario
+// ------------------------------------------------------
+$anunciosUsuario = [];
+
+$sqlAnuncios = "SELECT IdAnuncio, Titulo
+                FROM Anuncios
+                WHERE Usuario = $idUsuario
+                ORDER BY FRegistro DESC";
+
+if ($resAn = $mysqli->query($sqlAnuncios)) {
+    while ($fila = $resAn->fetch_assoc()) {
+        $anunciosUsuario[] = $fila;
+    }
+    $resAn->free();
+}
 ?>
 
 <section aria-labelledby="intro">
-  
   <p>
     A través de este formulario puedes solicitar el envío postal de un folleto publicitario impreso
     basado en uno de tus anuncios. Completa los datos de contacto y envío, elige las opciones de
@@ -49,7 +106,6 @@ require_once("inicio.inc");
     $precio_color = 0.5;
     $precio_res_alta = 0.2;
 
-    // Crear tabla
     echo "<table>";
     echo "<thead><tr><th>Páginas</th><th>Nº fotos</th><th>B/N 150–300 dpi</th><th>B/N >300 dpi</th><th>Color 150–300 dpi</th><th>Color >300 dpi</th></tr></thead>";
     echo "<tbody>";
@@ -183,9 +239,18 @@ require_once("inicio.inc");
       <label for="anuncioUsuario">Anuncio *</label><br />
       <select id="anuncioUsuario" name="anuncioUsuario" required>
         <option value="" selected>— Selecciona tu anuncio —</option>
-        <option value="anuncio-1">Piso céntrico 2 hab. Madrid</option>
-        <option value="anuncio-2">Ático con terraza en París</option>
-        <option value="anuncio-3">Estudio reformado en Alicante</option>
+        <?php if (!empty($anunciosUsuario)): ?>
+          <?php foreach ($anunciosUsuario as $an): 
+            $idAnuncio  = (int)$an['IdAnuncio'];
+            $tituloAn   = htmlspecialchars($an['Titulo'] ?? '', ENT_QUOTES, 'UTF-8');
+          ?>
+            <option value="<?php echo $idAnuncio; ?>">
+              <?php echo $tituloAn; ?>
+            </option>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <option value="">(No tienes anuncios publicados)</option>
+        <?php endif; ?>
       </select>
     </fieldset>
 
@@ -209,7 +274,6 @@ require_once("inicio.inc");
 </main>
 
 <?php
+$mysqli->close();
 require_once("footer.inc");
 ?>
-
-

@@ -343,6 +343,14 @@ footer p {
   background-color: #7e57c2;
 }
 
+/* Foto de perfil en perfil_usuario */
+.foto-perfil img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;  /* recorta sin deformar */
+  border-radius: 50%; 
+}
+
 
 /* PARA PC*/
 @media (min-width: 1920px) {

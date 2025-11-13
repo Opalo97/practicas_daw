@@ -3,9 +3,24 @@ $title = "Registro de nuevo usuario";
 require_once("cabecera.inc");
 require_once("inicio2.inc");
 require_once("flashdata.php");
+require_once("bd.php"); //  acceder a la BD
 
 session_start();
 $errores = get_flash('errores');
+
+// ---- Cargar países desde la BD ----
+$paises = [];
+$mysqli = obtenerConexion();
+
+$sql = "SELECT IdPais, NomPais FROM Paises ORDER BY NomPais";
+if ($resultado = $mysqli->query($sql)) {
+    while ($fila = $resultado->fetch_assoc()) {
+        $paises[] = $fila;
+    }
+    $resultado->free();
+} 
+
+$mysqli->close();
 ?>
 
 <?php if ($errores): ?>
@@ -21,7 +36,6 @@ $errores = get_flash('errores');
 
 <section>
   <article>
-
 
     <form id="formRegistro" class="form-registro" action="respuesta_registro.php" method="post" enctype="multipart/form-data" novalidate>
 
@@ -57,16 +71,15 @@ $errores = get_flash('errores');
         <label for="pais">País:</label>
         <select id="pais" name="pais">
           <option value="">Seleccione un país</option>
-          <option value="espana">España</option>
-          <option value="francia">Francia</option>
-          <option value="italia">Italia</option>
-          <option value="alemania">Alemania</option>
-          <option value="portugal">Portugal</option>
-          <option value="mexico">México</option>
-          <option value="argentina">Argentina</option>
-          <option value="chile">Chile</option>
-          <option value="colombia">Colombia</option>
-          <option value="peru">Perú</option>
+          <?php if (!empty($paises)): ?>
+            <?php foreach ($paises as $pais): ?>
+              <option value="<?php echo (int)$pais['IdPais']; ?>">
+                <?php echo htmlspecialchars($pais['NomPais'], ENT_QUOTES, 'UTF-8'); ?>
+              </option>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <option value="">(No hay países en la base de datos)</option>
+          <?php endif; ?>
         </select>
 
         <div class="upload-container">
@@ -89,5 +102,3 @@ $errores = get_flash('errores');
 <?php
 require_once("footer.inc");
 ?>
-
-
