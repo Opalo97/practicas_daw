@@ -1,0 +1,66 @@
+INSTRUCCIONES PARA PROBAR LA PRÁCTICA
+
+1. REQUISITOS PREVIOS
+
+- Tener instalado XAMPP (o similar) con:
+  - Apache
+  - MariaDB
+- Arrancar desde el panel de XAMPP:
+  - Apache
+  - MySQL
+
+2. IMPORTAR LA BASE DE DATOS DESDE "pibd.sql"
+
+1) Abrir el navegador y entrar en:
+   http://localhost/phpmyadmin
+
+2) IMPORTAR DIRECTAMENTE EL ARCHIVO "pibd.sql":
+
+   - En la página principal de phpMyAdmin, ir a la pestaña "Importar".
+   - En "Archivo a importar", seleccionar el archivo "pibd.sql" que se entrega con la práctica.
+   - Pulsar "Continuar".
+   - Si el archivo "pibd.sql" incluye la creación de la base de datos y las tablas,
+     la base de datos "pibd" aparecerá automáticamente con todas sus tablas.
+
+
+3) Tras la importación, en la base de datos "pibd" deberían verse las tablas:
+   Paises, Usuarios, Anuncios, Fotos, Solicitudes, Mensajes, etc.
+
+
+3. CREAR EL USUARIO DE BASE DE DATOS "pibd_user"
+
+1) En phpMyAdmin, ir a la pestaña "Cuentas de usuario".
+2) Pulsar "Agregar cuenta de usuario".
+3) Rellenar:
+   - Nombre de usuario: pibd_user
+   - Servidor: localhost
+   - Contraseña: la misma que está escrita en el archivo "config.ini" de la práctica (pibd1234).
+
+4) En "Privilegios globales" no es necesario marcar nada.
+
+5) En la parte de "Privilegios específicos para la base de datos":
+   - Seleccionar la base de datos "pibd".
+   - Marcar los privilegios:
+     SELECT, INSERT, UPDATE, DELETE.
+
+6) Guardar los cambios.
+
+
+4. COLOCAR LA CARPETA DEL PROYECTO
+
+- Copiar la carpeta del proyecto en la carpeta "htdocs" del XAMPP del equipo donde se vaya a probar.
+
+5. ARCHIVO "config.ini"
+
+- En el archivo "config.ini" (ubicado en la carpeta "practicas_daw") debe aparecer algo así:
+
+  [DB]
+  Server   = "localhost"
+  User     = "pibd_user"
+  Password = "LA_MISMA_CONTRASEÑA_QUE_SE_PUSO_EN_PHPMyAdmin"
+  Database = "pibd"
+  Charset  = "utf8mb4"
+
+- Es importante que la contraseña coincida con la usada al crear el usuario "pibd_user"
+  en phpMyAdmin.
+
