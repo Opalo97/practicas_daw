@@ -1,4 +1,8 @@
 <?php
+// Ocultar notices y warnings en la salida
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
+
 $title = "Registro de nuevo usuario";
 require_once("cabecera.inc");
 require_once("inicio2.inc");
@@ -7,6 +11,10 @@ require_once("bd.php"); //  acceder a la BD
 
 session_start();
 $errores = get_flash('errores');
+
+
+
+
 
 // ---- Cargar países desde la BD ----
 $paises = [];
