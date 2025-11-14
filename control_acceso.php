@@ -1,95 +1,57 @@
 <?php
-ob_start();
 session_start();
-require_once("flashdata.php");
+require_once("bd.php");
 
-// Recoger valores originales (sin trim)
-$raw_usuario  = $_POST['usuario'] ?? null;
-$raw_password = $_POST['password'] ?? null;
+// Recuperamos usuario y contraseña del formulario
+$usuario = $_POST['usuario'] ?? '';
+$password = $_POST['password'] ?? '';
 
-if ($raw_usuario === null || $raw_password === null) {
-    header("Location: login.php");
-    exit;
-}
+if ($usuario && $password) {
+    $mysqli = obtenerConexion();
 
-$usuario  = trim($raw_usuario);
-$password = trim($raw_password);
-$recordarme = isset($_POST['recordarme']);
+    // Consulta segura
+    $stmt = $mysqli->prepare("SELECT IdUsuario, NomUsuario, Clave, Estilo FROM usuarios WHERE NomUsuario = ?");
+    $stmt->bind_param("s", $usuario);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-// Validar campos vacíos
-if ($usuario === '' || $password === '') {
-    set_flash('error', 'Por favor, rellena ambos campos.');
-    set_flash('user', $usuario);
-    header("Location: login.php");
-    exit;
-}
+    if ($fila = $resultado->fetch_assoc()) {
 
-// Cargar lista de usuarios válidos
-$usuarios_validos = include("usuarios.php");
-if (!is_array($usuarios_validos)) {
-    set_flash('error', 'Error al cargar credenciales.');
-    header("Location: login.php");
-    exit;
-}
+        if ($password === $fila['Clave']) {
 
-// Comprobar credenciales
-$autenticado = false;
-$usuario_info = null;
+            // Guardar sesión
+            $_SESSION['usuario'] = $fila['NomUsuario'];
+            $_SESSION['idusuario'] = $fila['IdUsuario'];
 
-foreach ($usuarios_validos as $u) {
-    if ($u['usuario'] === $usuario && $u['password'] === $password) {
-        $autenticado = true;
-        $usuario_info = $u;
-        break;
-    }
-}
+            // Guardar el estilo del usuario
+            $estiloId = $fila['Estilo'];
 
-if ($autenticado) {
-    // Guardar datos de sesión
-    $_SESSION['usuario'] = $usuario;
+            // Consultar el CSS del estilo
+            $res = $mysqli->query("SELECT Fichero FROM estilos WHERE IdEstilo = $estiloId LIMIT 1");
 
-    // 🔹 Asignar estilo (cada usuario puede tener uno en usuarios.php)
-    $estilo = "basic.css"; // Estilo por defecto
-    if (isset($usuario_info['estilo']) && $usuario_info['estilo'] !== '') {
-        $estilo = $usuario_info['estilo'];
-    }
-    $_SESSION['estilo'] = $estilo;
+            if ($row = $res->fetch_assoc()) {
+                $_SESSION['estilo'] = $row['Fichero'];
+            } else {
+                $_SESSION['estilo'] = "basic.css"; // fallback
+            }
 
-    // 🔹 Si el usuario marcó "Recordarme"
-    if ($recordarme) {
-        $duracion = time() + (90 * 24 * 60 * 60); // 90 días
+            // Redirigir
+            header("Location: index.php");
+            exit;
 
-        // Recuperar la última visita anterior (si existe)
-        $ultima_visita_anterior = $_COOKIE['ultima_visita'] ?? null;
-
-        // Guardar cookies de sesión recordada
-        setcookie('usuario', $usuario, $duracion, '/', '', false, true);
-        setcookie('password', $password, $duracion, '/', '', false, true);
-        setcookie('estilo', $estilo, $duracion, '/', '', false, true);
-
-        // Guardar nueva fecha y hora de acceso actual
-        setcookie('ultima_visita', date('d/m/Y H:i:s'), $duracion, '/', '', false, true);
-
-        // Si había una visita anterior, la mostramos en la sesión
-        if ($ultima_visita_anterior) {
-            $_SESSION['ultima_visita'] = $ultima_visita_anterior;
+        } else {
+            $_SESSION['error_login'] = "Usuario o contraseña incorrectos.";
+            header("Location: login.php");
+            exit;
         }
     } else {
-        // 🔸 Si no se marcó "recordarme", eliminar posibles cookies antiguas
-        setcookie('usuario', '', time() - 3600, '/');
-        setcookie('password', '', time() - 3600, '/');
-        setcookie('estilo', '', time() - 3600, '/');
-        setcookie('ultima_visita', '', time() - 3600, '/');
+        $_SESSION['error_login'] = "Usuario o contraseña incorrectos.";
+        header("Location: login.php");
+        exit;
     }
 
-    // Redirigir al inicio o zona privada
-    header("Location: index.php");
-    exit;
-
 } else {
-    // Credenciales incorrectas → flashdata
-    set_flash('error', 'Usuario o contraseña incorrectos.');
-    set_flash('user', $usuario);
+    $_SESSION['error_login'] = "Debes introducir usuario y contraseña.";
     header("Location: login.php");
     exit;
 }

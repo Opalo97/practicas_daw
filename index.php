@@ -46,33 +46,28 @@ if ($hora >= 6 && $hora < 12) {
     $saludo = "Buenas noches";
 }
 
-// ---------- MOSTRAR ÚLTIMA VISITA (solo si restaurado por cookie) ----------
-if ($restaurado_por_cookie) {
-    if (isset($_COOKIE['ultima_visita'])) {
-        $ultima = htmlspecialchars($_COOKIE['ultima_visita'], ENT_QUOTES, 'UTF-8');
+// ---------- MOSTRAR ÚLTIMA VISITA ----------
+// Siempre calcular la última visita y actualizar cookie
+$ultima = $_COOKIE['ultima_visita'] ?? false; // Valor anterior
+$ahora = date('d/m/Y H:i:s'); // Fecha actual
+
+if ($restaurado_por_cookie || isset($_SESSION['usuario'])) {
+    if ($ultima) {
+        // Mostrar última visita
         echo "<p style='text-align:right; margin:10px; font-style:italic;'>
                 $saludo, <strong>$usuario</strong>. Tu última visita fue el <strong>$ultima</strong>.
               </p>";
     } else {
+        // Primera visita
         echo "<p style='text-align:right; margin:10px; font-style:italic;'>
-                $saludo, <strong>$usuario</strong>. Esta es tu primera visita recordada.
+                $saludo, <strong>$usuario</strong>. Esta es tu primera visita.
               </p>";
     }
 
     // Actualizar cookie para la próxima visita
-    setcookie('ultima_visita', date('d/m/Y H:i:s'), time() + (90 * 24 * 60 * 60), '/', '', false, true);
-} else {
-  // Mostrar saludo siempre
-  echo "<h3 style='text-align:right; padding:10px;'>$saludo, <strong>$usuario</strong></h3>";
-
-  // Mostrar última visita si la cookie existe (aunque no haya sido restaurado)
-  if (isset($_COOKIE['ultima_visita'])) {
-      $ultima = htmlspecialchars($_COOKIE['ultima_visita'], ENT_QUOTES, 'UTF-8');
-      echo "<p style='text-align:right; margin:10px; font-style:italic;'>
-              Tu última visita fue el <strong>$ultima</strong>.
-            </p>";
-  }
+    setcookie('ultima_visita', $ahora, time() + (90 * 24 * 60 * 60), '/', '', false, true);
 }
+
 ?>
 
 <section>

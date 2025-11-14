@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-11-2025 a las 10:07:02
+-- Tiempo de generación: 14-11-2025 a las 08:54:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -47,6 +47,17 @@ CREATE TABLE `anuncios` (
   `Usuario` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `anuncios`
+--
+
+INSERT INTO `anuncios` (`IdAnuncio`, `TAnuncio`, `TVivienda`, `FPrincipal`, `Alternativo`, `Titulo`, `Precio`, `Texto`, `Ciudad`, `Pais`, `Superficie`, `NHabitaciones`, `NBanyos`, `Planta`, `Anyo`, `FRegistro`, `Usuario`) VALUES
+(1, 2, 1, 'img/piso.jpg', 'Piso reformado en Alicante', 'Piso en Alicante centro', 235000.00, 'Vivienda reformada con 3 habitaciones y 2 baños...', 'Alicante', 1, 95.00, 3, 2, 4, 2008, '2025-05-10 10:00:00', 1),
+(2, 1, 2, 'img/foto_piso5.jpeg', 'Ático con terraza en París', 'Ático con terraza y vistas al río', 450000.00, 'Ático con terraza y vistas al río, ideal para parejas...', 'París', 2, 120.00, 2, 1, 5, 2015, '2025-07-02 18:30:00', 2),
+(3, 1, 1, 'img/foto_piso.jpg\n', 'Piso en Madrid centro', 'Piso en Madrid centro', 320000.00, 'Piso luminoso en el centro de Madrid con balcón.', 'Madrid', 1, 90.00, 3, 2, 3, 2010, '2025-08-01 09:00:00', 1),
+(4, 2, 1, 'img/casa1.jpg', 'Casa en Roma', 'Casa en Roma', 280000.00, 'Casa familiar con jardín en Roma.', 'Roma', 3, 110.00, 4, 2, 2, 2005, '2025-08-15 16:00:00', 2),
+(5, 1, 2, 'img/piso3.jpg', 'Ático en Lisboa', 'Ático en Lisboa', 310000.00, 'Ático con vistas al río Tajo en Lisboa.', 'Lisboa', 4, 85.00, 2, 1, 6, 2012, '2025-09-01 11:00:00', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -59,6 +70,17 @@ CREATE TABLE `estilos` (
   `Descripcion` text DEFAULT NULL,
   `Fichero` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `estilos`
+--
+
+INSERT INTO `estilos` (`IdEstilo`, `Nombre`, `Descripcion`, `Fichero`) VALUES
+(1, 'Modo oscuro', 'Hoja de estilo modo oscuro', 'modo-oscuro.css'),
+(2, 'Básico', 'Hoja de estilo básica', 'basic.css'),
+(3, 'Accesible', 'Hoja de estilo accesible', 'accesible.css'),
+(4, 'Alto contraste', 'Hoja de estilo en alto contraste', 'alto-contraste.css'),
+(5, 'Letra grande', 'Hoja de estilo con letra más grande', 'letra_grande.css');
 
 -- --------------------------------------------------------
 
@@ -73,6 +95,27 @@ CREATE TABLE `fotos` (
   `Alternativo` varchar(255) NOT NULL,
   `Anuncio` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `fotos`
+--
+
+INSERT INTO `fotos` (`IdFoto`, `Titulo`, `Foto`, `Alternativo`, `Anuncio`) VALUES
+(1, NULL, 'img/foto_piso.jpg', 'Foto principal del piso', 1),
+(2, NULL, 'img/foto_piso2.jpg', 'Salón del piso', 1),
+(5, NULL, 'img/foto_piso5.jpeg', 'Baño principal', 1),
+(6, NULL, 'img/foto_piso6.jpeg', 'Balcón del piso', 1),
+(7, NULL, 'img/piso.jpg', 'Foto principal del ático', 2),
+(9, NULL, 'img/piso3.jpg', 'Salón del ático', 2),
+(10, NULL, 'img/piso4.jpg', 'Cocina del ático', 2),
+(11, NULL, 'img/piso5.jpg', 'Dormitorio del ático', 2),
+(12, NULL, 'img/piso6.jpg', 'Baño del ático', 2),
+(13, NULL, 'img/foto_piso.jpg', 'Foto principal', 3),
+(25, NULL, 'img/piso3.jpg', 'Foto principal del ático', 5),
+(26, NULL, 'img/piso4.jpg', 'Salón del ático', 5),
+(27, NULL, 'img/piso5.jpg', 'Cocina del ático', 5),
+(28, NULL, 'img/piso6.jpg', 'Dormitorio principal', 5),
+(30, NULL, 'img/piso.jpg', 'Balcón', 5);
 
 -- --------------------------------------------------------
 
@@ -89,6 +132,14 @@ CREATE TABLE `mensajes` (
   `UsuDestino` int(10) UNSIGNED NOT NULL,
   `FRegistro` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `mensajes`
+--
+
+INSERT INTO `mensajes` (`IdMensaje`, `TMensaje`, `Texto`, `Anuncio`, `UsuOrigen`, `UsuDestino`, `FRegistro`) VALUES
+(1, 2, 'Hola, me interesa tu anuncio', 1, 1, 1, '2025-11-13 23:12:21'),
+(2, 1, 'Gracias por tu interés', 1, 2, 2, '2025-11-13 23:12:21');
 
 -- --------------------------------------------------------
 
@@ -146,6 +197,14 @@ CREATE TABLE `tiposanuncios` (
   `NomTAnuncio` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `tiposanuncios`
+--
+
+INSERT INTO `tiposanuncios` (`IdTAnuncio`, `NomTAnuncio`) VALUES
+(1, 'Venta'),
+(2, 'Alquiler');
+
 -- --------------------------------------------------------
 
 --
@@ -157,6 +216,15 @@ CREATE TABLE `tiposmensajes` (
   `NomTMensaje` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `tiposmensajes`
+--
+
+INSERT INTO `tiposmensajes` (`IdTMensaje`, `NomTMensaje`) VALUES
+(1, 'Más información'),
+(2, 'Solicitar una cita'),
+(3, 'Comunicar una oferta');
+
 -- --------------------------------------------------------
 
 --
@@ -167,6 +235,14 @@ CREATE TABLE `tiposviviendas` (
   `IdTVivienda` tinyint(3) UNSIGNED NOT NULL,
   `NomTVivienda` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tiposviviendas`
+--
+
+INSERT INTO `tiposviviendas` (`IdTVivienda`, `NomTVivienda`) VALUES
+(1, 'Vivienda'),
+(2, 'Ático');
 
 -- --------------------------------------------------------
 
@@ -187,6 +263,14 @@ CREATE TABLE `usuarios` (
   `FRegistro` datetime NOT NULL DEFAULT current_timestamp(),
   `Estilo` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`IdUsuario`, `NomUsuario`, `Clave`, `Email`, `Sexo`, `FNacimiento`, `Ciudad`, `Pais`, `Foto`, `FRegistro`, `Estilo`) VALUES
+(1, 'juan', 'juan123', 'juan@example.com', NULL, NULL, NULL, NULL, 'img/juan.jpg', '2025-11-13 10:40:00', 1),
+(2, 'maria', 'abcd', 'maria@example.com', NULL, NULL, NULL, NULL, 'img/maria.jpg', '2025-11-13 10:40:00', 2);
 
 --
 -- Índices para tablas volcadas
@@ -273,25 +357,25 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `anuncios`
 --
 ALTER TABLE `anuncios`
-  MODIFY `IdAnuncio` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdAnuncio` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `estilos`
 --
 ALTER TABLE `estilos`
-  MODIFY `IdEstilo` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdEstilo` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes`
 --
 ALTER TABLE `mensajes`
-  MODIFY `IdMensaje` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdMensaje` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `paises`
@@ -309,25 +393,25 @@ ALTER TABLE `solicitudes`
 -- AUTO_INCREMENT de la tabla `tiposanuncios`
 --
 ALTER TABLE `tiposanuncios`
-  MODIFY `IdTAnuncio` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdTAnuncio` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposmensajes`
 --
 ALTER TABLE `tiposmensajes`
-  MODIFY `IdTMensaje` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdTMensaje` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposviviendas`
 --
 ALTER TABLE `tiposviviendas`
-  MODIFY `IdTVivienda` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdTVivienda` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `IdUsuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdUsuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas

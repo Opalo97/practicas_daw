@@ -1,51 +1,94 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE); // Reporta todo excepto Notices
+session_start();
+
+
 $title = "Mis Mensajes";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+require_once("bd.php");
+
+session_start();
+if (!isset($_SESSION['idusuario'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$idusuario = $_SESSION['idusuario'];
+$mysqli = obtenerConexion();
 ?>
 
 <fieldset>
-  <legend>Mensaje Enviado</legend>
-  <dl>
-    <dt>Tipo de mensaje</dt>
-    <dd>Solicitar una cita</dd>
+  <legend>Mensajes Enviados</legend>
+  <?php
+  $sql_enviados = "
+      SELECT m.Texto, m.FRegistro, t.NomTMensaje, u.Email AS destinatario
+      FROM mensajes m
+      JOIN tiposmensajes t ON m.TMensaje = t.IdTMensaje
+      JOIN usuarios u ON m.UsuDestino = u.IdUsuario
+      WHERE m.UsuOrigen = ?
+      ORDER BY m.FRegistro DESC
+  ";
+  $stmt = $mysqli->prepare($sql_enviados);
+  $stmt->bind_param("i", $idusuario);
+  $stmt->execute();
+  $res = $stmt->get_result();
 
-    <dt>Texto</dt>
-    <dd>
-      Buenos días, me pongo en contacto con usted porque estoy interesado en el piso anunciado en Madrid centro
-      y me gustaría concertar una cita para poder visitarlo en persona; quedo a su disposición para adaptarme
-      al horario que le resulte más conveniente y le agradezco de antemano su atención.
-    </dd>
-
-    <dt>Fecha</dt>
-    <dd>16/05/2025</dd>
-
-    <dt>Usuario receptor</dt>
-    <dd>lolita@gmail.com</dd>
-  </dl>
+  if ($res->num_rows > 0) {
+      while ($fila = $res->fetch_assoc()) {
+          $texto = htmlspecialchars($fila['Texto'], ENT_QUOTES, 'UTF-8');
+          $fecha = date('d/m/Y', strtotime($fila['FRegistro']));
+          $tipo  = htmlspecialchars($fila['NomTMensaje'], ENT_QUOTES, 'UTF-8');
+          $dest  = htmlspecialchars($fila['destinatario'], ENT_QUOTES, 'UTF-8');
+          echo "<dl>
+                  <dt>Tipo de mensaje</dt><dd>$tipo</dd>
+                  <dt>Texto</dt><dd>$texto</dd>
+                  <dt>Fecha</dt><dd>$fecha</dd>
+                  <dt>Usuario receptor</dt><dd>$dest</dd>
+                </dl><hr>";
+      }
+  } else {
+      echo "<p>No has enviado ningún mensaje.</p>";
+  }
+  $stmt->close();
+  ?>
 </fieldset>
 
 <fieldset>
-  <legend>Mensaje Recibido</legend>
-  <dl>
-    <dt>Tipo de mensaje</dt>
-    <dd>Comunicar una oferta</dd>
+  <legend>Mensajes Recibidos</legend>
+  <?php
+  $sql_recibidos = "
+      SELECT m.Texto, m.FRegistro, t.NomTMensaje, u.Email AS remitente
+      FROM mensajes m
+      JOIN tiposmensajes t ON m.TMensaje = t.IdTMensaje
+      JOIN usuarios u ON m.UsuOrigen = u.IdUsuario
+      WHERE m.UsuDestino = ?
+      ORDER BY m.FRegistro DESC
+  ";
+  $stmt = $mysqli->prepare($sql_recibidos);
+  $stmt->bind_param("i", $idusuario);
+  $stmt->execute();
+  $res = $stmt->get_result();
 
-    <dt>Texto</dt>
-    <dd>
-      Estimada Petunia, le agradezco mucho su interés en mi vivienda y quería informarle de que, teniendo en cuenta
-      que el baño secundario cuenta con unas dimensiones algo más reducidas que el baño principal de la casa, he
-      decidido aplicar una rebaja en el precio del alquiler como gesto de transparencia y para que la oferta
-      resulte aún más atractiva; quedo a su disposición para cualquier consulta adicional o para concretar una
-      visita cuando le venga bien.
-    </dd>
-
-    <dt>Fecha</dt>
-    <dd>23/05/2025</dd>
-
-    <dt>Usuario emisor</dt>
-    <dd>pere@gmail.com</dd>
-  </dl>
+  if ($res->num_rows > 0) {
+      while ($fila = $res->fetch_assoc()) {
+          $texto = htmlspecialchars($fila['Texto'], ENT_QUOTES, 'UTF-8');
+          $fecha = date('d/m/Y', strtotime($fila['FRegistro']));
+          $tipo  = htmlspecialchars($fila['NomTMensaje'], ENT_QUOTES, 'UTF-8');
+          $remit = htmlspecialchars($fila['remitente'], ENT_QUOTES, 'UTF-8');
+          echo "<dl>
+                  <dt>Tipo de mensaje</dt><dd>$tipo</dd>
+                  <dt>Texto</dt><dd>$texto</dd>
+                  <dt>Fecha</dt><dd>$fecha</dd>
+                  <dt>Usuario emisor</dt><dd>$remit</dd>
+                </dl><hr>";
+      }
+  } else {
+      echo "<p>No has recibido ningún mensaje.</p>";
+  }
+  $stmt->close();
+  $mysqli->close();
+  ?>
 </fieldset>
 
 </main>

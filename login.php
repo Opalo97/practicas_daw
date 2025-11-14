@@ -9,22 +9,34 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Si el usuario ya tiene cookie válida, redirigir
+require_once("bd.php"); // Conexión a la BD
+
+// ---------- Restaurar sesión desde cookies ----------
 if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
-    $usuarios = require_once("usuarios.php"); 
-    foreach ($usuarios as $u) {
-        if ($u['usuario'] === $_COOKIE['usuario'] && $u['password'] === $_COOKIE['password']) {
-            $_SESSION['usuario'] = $u['usuario'];
-            header("Location: cuenta.php");
+    $mysqli = obtenerConexion();
+
+    $stmt = $mysqli->prepare("SELECT NomUsuario, Clave FROM usuarios WHERE NomUsuario = ?");
+    $stmt->bind_param("s", $_COOKIE['usuario']);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($fila = $resultado->fetch_assoc()) {
+        if ($_COOKIE['password'] === $fila['Clave']) {
+            $_SESSION['usuario'] = $fila['NomUsuario'];
+            header("Location: index.php");
             exit;
         }
     }
+
+    $stmt->close();
+    $mysqli->close();
 }
 
-// Recuperar valores flash
+// ---------- Recuperar valores flash ----------
 $flash_error = get_flash('error');
-$flash_user = get_flash('user');
+$flash_user  = get_flash('user');
 $valorUsuario = $_COOKIE['usuario'] ?? $flash_user ?? '';
+
 ?>
 <section>
   <fieldset>

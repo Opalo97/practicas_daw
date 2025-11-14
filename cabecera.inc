@@ -26,4 +26,5 @@ $estilo_activo = $_SESSION['estilo'] ?? ($_COOKIE['estilo'] ?? "basic.css");
   <link rel="alternate stylesheet" href="accesible.css" title="Accesible">
   <link rel="alternate stylesheet" href="alto-contraste.css" title="Modo Alto Contraste">
   <link rel="alternate stylesheet" href="letra_grande.css" title="Letra Grande">
+  <link rel="stylesheet" href="estilos_ver_fotos.css">
 </head>

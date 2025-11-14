@@ -2,10 +2,12 @@
 $title = "Crear un anuncio nuevo";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+require_once("bd.php"); // conexión a la BD
+
+$mysqli = obtenerConexion();
 ?>
 
 <section>
-
   <p>
     Completa el siguiente formulario para publicar un nuevo anuncio de inmueble. 
     Todos los campos marcados con * son obligatorios.
@@ -19,19 +21,25 @@ require_once("inicio.inc");
       <label for="tipo_anuncio">Tipo de anuncio *</label><br>
       <select id="tipo_anuncio" name="tipo_anuncio" required>
         <option value="">— Selecciona —</option>
-        <option value="venta">Venta</option>
-        <option value="alquiler">Alquiler</option>
+        <?php
+        $res = $mysqli->query("SELECT IdTAnuncio, NomTAnuncio FROM TiposAnuncios ORDER BY NomTAnuncio");
+        while ($row = $res->fetch_assoc()) {
+            echo '<option value="'.htmlspecialchars($row['IdTAnuncio']).'">'.htmlspecialchars($row['NomTAnuncio']).'</option>';
+        }
+        $res->free();
+        ?>
       </select><br><br>
 
       <label for="tipo_vivienda">Tipo de vivienda *</label><br>
       <select id="tipo_vivienda" name="tipo_vivienda" required>
         <option value="">— Selecciona —</option>
-        <option value="piso">Piso</option>
-        <option value="casa">Casa</option>
-        <option value="atico">Ático</option>
-        <option value="estudio">Estudio</option>
-        <option value="local">Local</option>
-        <option value="oficina">Oficina</option>
+        <?php
+        $res = $mysqli->query("SELECT IdTVivienda, NomTVivienda FROM TiposViviendas ORDER BY NomTVivienda");
+        while ($row = $res->fetch_assoc()) {
+            echo '<option value="'.htmlspecialchars($row['IdTVivienda']).'">'.htmlspecialchars($row['NomTVivienda']).'</option>';
+        }
+        $res->free();
+        ?>
       </select><br><br>
 
       <label for="titulo">Título *</label><br>
@@ -55,16 +63,13 @@ require_once("inicio.inc");
       <label for="pais">País *</label><br>
       <select id="pais" name="pais" required>
         <option value="">Seleccione un país</option>
-        <option value="espana">España</option>
-        <option value="francia">Francia</option>
-        <option value="italia">Italia</option>
-        <option value="alemania">Alemania</option>
-        <option value="portugal">Portugal</option>
-        <option value="mexico">México</option>
-        <option value="argentina">Argentina</option>
-        <option value="chile">Chile</option>
-        <option value="colombia">Colombia</option>
-        <option value="peru">Perú</option>
+        <?php
+        $res = $mysqli->query("SELECT IdPais, NomPais FROM Paises ORDER BY NomPais");
+        while ($row = $res->fetch_assoc()) {
+            echo '<option value="'.htmlspecialchars($row['IdPais']).'">'.htmlspecialchars($row['NomPais']).'</option>';
+        }
+        $res->free();
+        ?>
       </select><br><br>
 
       <label for="fecha">Fecha de publicación *</label><br>
@@ -114,5 +119,6 @@ require_once("inicio.inc");
 </main>
 
 <?php
+$mysqli->close();
 require_once("footer.inc");
 ?>
