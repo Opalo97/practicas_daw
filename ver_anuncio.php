@@ -116,6 +116,8 @@ $altPrincipal   = htmlspecialchars($anuncio['Alternativo'] ?? 'Foto principal de
 
 $enlaceMensaje = true;
 $enlaceFotos   = true;
+// Si esta página se muestra en el contexto de anuncios privados, usar la vista privada de fotos
+$fotos_priv = true;
 
 // ------------------------------------------------------
 // 6. Incluir plantilla de mostrar anuncio

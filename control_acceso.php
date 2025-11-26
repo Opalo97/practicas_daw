@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("bd.php");
+require_once('flashdata.php');
 
 // Recuperamos usuario y contraseña del formulario
 $usuario = $_POST['usuario'] ?? '';
@@ -40,18 +41,21 @@ if ($usuario && $password) {
             exit;
 
         } else {
-            $_SESSION['error_login'] = "Usuario o contraseña incorrectos.";
+            set_flash('error', "Usuario o contraseña incorrectos.");
+            set_flash('user', $usuario);
             header("Location: login.php");
             exit;
         }
     } else {
-        $_SESSION['error_login'] = "Usuario o contraseña incorrectos.";
+        set_flash('error', "Usuario o contraseña incorrectos.");
+        set_flash('user', $usuario);
         header("Location: login.php");
         exit;
     }
 
 } else {
-    $_SESSION['error_login'] = "Debes introducir usuario y contraseña.";
+    set_flash('error', "Debes introducir usuario y contraseña.");
+    set_flash('user', $usuario);
     header("Location: login.php");
     exit;
 }

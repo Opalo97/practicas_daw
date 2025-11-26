@@ -113,7 +113,10 @@
   <fieldset>
     <legend>Galería de fotos</legend>
     <p>
-      <a class="enlaces" href="ver_fotos.php?id=<?php echo $id; ?>">Ver todas las fotos del anuncio</a>
+      <?php
+        $link = (isset($fotos_priv) && $fotos_priv) ? 'ver_fotos_priv.php' : 'ver_fotos.php';
+      ?>
+      <a class="enlaces" href="<?php echo $link; ?>?id=<?php echo $id; ?>">Ver todas las fotos del anuncio</a>
     </p>
   </fieldset>
   <?php endif; ?>

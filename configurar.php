@@ -9,6 +9,7 @@ $title = "Configurar estilo";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 require_once("bd.php");
+require_once("flashdata.php");
 
 $mysqli = obtenerConexion();
 
@@ -21,6 +22,16 @@ while ($fila = $res->fetch_assoc()) {
 }
 $res->free();
 $mysqli->close();
+
+// Determinar nombre del estilo actual (si es posible)
+$estiloActualNombre = null;
+foreach ($estilos as $e) {
+  if (isset($_SESSION['estilo']) && $_SESSION['estilo'] === $e['Fichero']) {
+    $estiloActualNombre = $e['Nombre'];
+    break;
+  }
+}
+if ($estiloActualNombre === null) $estiloActualNombre = $_SESSION['estilo'] ?? "basic.css";
 ?>
 
 <style>
@@ -34,9 +45,15 @@ input[type="radio"][data-bloqueado="1"] {
 <section>
   <article>
 
-    <form method="post" action="#" class="form-configurar">
+    <?php $err = get_flash('error_config'); if ($err): ?>
+      <div class="mensaje-error">
+        <p><?php echo htmlspecialchars($err); ?></p>
+      </div>
+    <?php endif; ?>
+
+    <form method="post" action="respuesta_configurar.php" class="form-configurar">
       <p>Estilo actual: 
-        <strong><?php echo htmlspecialchars($_SESSION['estilo']); ?></strong>
+        <strong><?php echo htmlspecialchars($estiloActualNombre); ?></strong>
       </p>
 
       <ul>
@@ -46,9 +63,8 @@ input[type="radio"][data-bloqueado="1"] {
               <input 
                 type="radio" 
                 name="estilo" 
-                value="<?php echo $estilo['Fichero']; ?>"
-                <?php echo ($_SESSION['estilo'] === $estilo['Fichero']) ? 'checked' : ''; ?>
-                data-bloqueado="1"
+                value="<?php echo (int)$estilo['IdEstilo']; ?>"
+                <?php echo (isset($_SESSION['estilo']) && $_SESSION['estilo'] === $estilo['Fichero']) ? 'checked' : ''; ?>
               >
               <?php echo htmlspecialchars($estilo['Nombre']); ?> -
               <?php echo htmlspecialchars($estilo['Descripcion']); ?>
@@ -58,7 +74,7 @@ input[type="radio"][data-bloqueado="1"] {
       </ul>
 
       <p>
-        <input type="submit" value="Guardar cambios" style="opacity:0.6; pointer-events:none;">
+        <input type="submit" value="Guardar cambios">
       </p>
     </form>
   </article>

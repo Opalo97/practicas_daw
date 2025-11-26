@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-11-2025 a las 08:54:00
+-- Tiempo de generación: 26-11-2025 a las 14:00:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -114,8 +114,11 @@ INSERT INTO `fotos` (`IdFoto`, `Titulo`, `Foto`, `Alternativo`, `Anuncio`) VALUE
 (25, NULL, 'img/piso3.jpg', 'Foto principal del ático', 5),
 (26, NULL, 'img/piso4.jpg', 'Salón del ático', 5),
 (27, NULL, 'img/piso5.jpg', 'Cocina del ático', 5),
-(28, NULL, 'img/piso6.jpg', 'Dormitorio principal', 5),
-(30, NULL, 'img/piso.jpg', 'Balcón', 5);
+(31, 'Salon', 'img/foto_piso1.jpg', 'Curiosidades Fascinantes', 1),
+(32, 'Salom', 'img/foto_piso2.jpg', 'Curiosidades Fas', 1),
+(33, 'Salon', 'img/foto_piso2.jpg', 'Curiosidades Fas', 3),
+(34, 'Salon', 'img/piso5.jpg', 'Curiosidades Fascinant', 1),
+(37, 'Salon', 'img/piso4.jpg', 'Curiosidades Fascinantes sobre la Música', 3);
 
 -- --------------------------------------------------------
 
@@ -139,7 +142,10 @@ CREATE TABLE `mensajes` (
 
 INSERT INTO `mensajes` (`IdMensaje`, `TMensaje`, `Texto`, `Anuncio`, `UsuOrigen`, `UsuDestino`, `FRegistro`) VALUES
 (1, 2, 'Hola, me interesa tu anuncio', 1, 1, 1, '2025-11-13 23:12:21'),
-(2, 1, 'Gracias por tu interés', 1, 2, 2, '2025-11-13 23:12:21');
+(2, 1, 'Gracias por tu interés', 1, 2, 2, '2025-11-13 23:12:21'),
+(3, 1, 'Hola que tal', 5, 1, 1, '2025-11-26 13:41:22'),
+(4, 2, 'holi', 5, 1, 1, '2025-11-26 13:57:38'),
+(5, 3, 'hola hola', 2, 1, 2, '2025-11-26 13:59:29');
 
 -- --------------------------------------------------------
 
@@ -185,6 +191,14 @@ CREATE TABLE `solicitudes` (
   `FRegistro` datetime NOT NULL DEFAULT current_timestamp(),
   `Coste` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `solicitudes`
+--
+
+INSERT INTO `solicitudes` (`IdSolicitud`, `Anuncio`, `Texto`, `Nombre`, `Email`, `Direccion`, `Telefono`, `Color`, `Copias`, `Resolucion`, `Fecha`, `IColor`, `IPrecio`, `FRegistro`, `Coste`) VALUES
+(1, 3, '', 'AgregarProductoAlCarritoCP', 'juan@example.com', 'asdf 234, 43534 ghfd, fgfgfgfgfg', '', '#cf1717', 4, 150, '2025-11-28', 1, 1, '2025-11-25 23:04:52', 54.00),
+(2, 5, '', 'AgregarProductoAlCarritoCP', 'juan@example.com', 'asdf 234, 43534 ghfd, df', '', '#000000', 1, 150, '0000-00-00', 0, 1, '2025-11-26 13:39:38', 12.00);
 
 -- --------------------------------------------------------
 
@@ -269,7 +283,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `NomUsuario`, `Clave`, `Email`, `Sexo`, `FNacimiento`, `Ciudad`, `Pais`, `Foto`, `FRegistro`, `Estilo`) VALUES
-(1, 'juan', 'juan123', 'juan@example.com', NULL, NULL, NULL, NULL, 'img/juan.jpg', '2025-11-13 10:40:00', 1),
+(1, 'juan', 'juan1234', 'juan@example.com', 1, NULL, NULL, 4, 'img/juan.jpg', '2025-11-13 10:40:00', 1),
 (2, 'maria', 'abcd', 'maria@example.com', NULL, NULL, NULL, NULL, 'img/maria.jpg', '2025-11-13 10:40:00', 2);
 
 --
@@ -369,13 +383,13 @@ ALTER TABLE `estilos`
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes`
 --
 ALTER TABLE `mensajes`
-  MODIFY `IdMensaje` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IdMensaje` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `paises`
@@ -387,7 +401,7 @@ ALTER TABLE `paises`
 -- AUTO_INCREMENT de la tabla `solicitudes`
 --
 ALTER TABLE `solicitudes`
-  MODIFY `IdSolicitud` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `IdSolicitud` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposanuncios`

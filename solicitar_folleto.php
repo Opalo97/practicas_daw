@@ -101,45 +101,46 @@ if ($resAn = $mysqli->query($sqlAnuncios)) {
   
   <div id="contenedorTabla" style="display:none; margin-top:1em;">
     <?php
-    // Tarifas
-    $coste_envio = 10;
-    $precio_color = 0.5;
-    $precio_res_alta = 0.2;
+    // Generar en servidor la "Tabla de posibles costes" igual que hace el JS: páginas 1..15
+    $COSTE_ENVIO = 10;
+    $PRECIO_COLOR = 0.5;
+    $PRECIO_RES_ALTA = 0.2;
+    $FOTOS_POR_PAGINA = 3;
 
     echo "<table>";
     echo "<thead><tr><th>Páginas</th><th>Nº fotos</th><th>B/N 150–300 dpi</th><th>B/N >300 dpi</th><th>Color 150–300 dpi</th><th>Color >300 dpi</th></tr></thead>";
     echo "<tbody>";
 
-    for($paginas=1; $paginas<=15; $paginas++) {
-        $fotos = $paginas * 3;
+    for ($paginas = 1; $paginas <= 15; $paginas++) {
+      $fotos = $paginas * $FOTOS_POR_PAGINA;
 
-        echo "<tr>";
-        echo "<td>$paginas</td>";
-        echo "<td>$fotos</td>";
+      echo "<tr>";
+      echo "<td>" . $paginas . "</td>";
+      echo "<td>" . $fotos . "</td>";
 
-        if($paginas < 5) {
-            $precio_pagina = 2.0;
-        } elseif($paginas <= 10) {
-            $precio_pagina = 1.8;
-        } else {
-            $precio_pagina = 1.6;
-        }
+      if ($paginas < 5) {
+        $precio_pagina = 2.0;
+      } elseif ($paginas <= 10) {
+        $precio_pagina = 1.8;
+      } else {
+        $precio_pagina = 1.6;
+      }
 
-        $combinaciones = [
-            ['color'=>false,'altaRes'=>false],
-            ['color'=>false,'altaRes'=>true],
-            ['color'=>true,'altaRes'=>false],
-            ['color'=>true,'altaRes'=>true],
-        ];
+      $combinaciones = [
+        ['color' => false, 'altaRes' => false],
+        ['color' => false, 'altaRes' => true],
+        ['color' => true, 'altaRes' => false],
+        ['color' => true, 'altaRes' => true],
+      ];
 
-        foreach($combinaciones as $comb) {
-            $coste = $coste_envio + $paginas*$precio_pagina;
-            if($comb['color']) $coste += $fotos*$precio_color;
-            if($comb['altaRes']) $coste += $fotos*$precio_res_alta;
-            echo "<td>".number_format($coste,2)." €</td>";
-        }
+      foreach ($combinaciones as $comb) {
+        $coste = $COSTE_ENVIO + $paginas * $precio_pagina;
+        if ($comb['color']) $coste += $fotos * $PRECIO_COLOR;
+        if ($comb['altaRes']) $coste += $fotos * $PRECIO_RES_ALTA;
+        echo "<td>" . number_format($coste, 2) . " €</td>";
+      }
 
-        echo "</tr>";
+      echo "</tr>";
     }
 
     echo "</tbody></table>";
@@ -277,3 +278,4 @@ if ($resAn = $mysqli->query($sqlAnuncios)) {
 $mysqli->close();
 require_once("footer.inc");
 ?>
+<script src="solicitar-folleto.js"></script>

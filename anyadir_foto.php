@@ -13,13 +13,17 @@ $anuncio_id = isset($_GET['anuncio_id']) ? $_GET['anuncio_id'] : null;
     Completa el siguiente formulario para añadir una nueva imagen a uno de tus anuncios publicados.
   </p>
 
-  <form action="#" method="post" enctype="multipart/form-data">
+  <form action="respuesta_anyadir_foto.php" method="post" enctype="multipart/form-data">
     <fieldset>
       <legend>Datos de la nueva foto</legend>
 
       <!-- Campo de subida -->
       <label for="foto">Selecciona la foto:</label><br>
-      <input type="file" id="foto" name="foto" accept="image/*" required><br><br>
+      <input type="file" id="foto" name="foto" accept="image/*"><br>
+      <small>Opcional: si ya has subido el fichero manualmente al servidor, indica su ruta abajo.</small><br><br>
+
+      <label for="ruta_foto">Ruta del fichero en el servidor (ej: img/mi_foto.jpg)</label><br>
+      <input type="text" id="ruta_foto" name="ruta_foto" placeholder="img/mi_foto.jpg"><br><br>
 
       <!-- Texto alternativo -->
       <label for="alt">Texto alternativo (para accesibilidad):</label><br>
@@ -32,25 +36,63 @@ $anuncio_id = isset($_GET['anuncio_id']) ? $_GET['anuncio_id'] : null;
       <!-- Selección de anuncio -->
       <label for="anuncio">Anuncio asociado:</label><br>
 
-      <?php if ($anuncio_id): ?>
-        <!-- Modo: acceso directo (anuncio bloqueado) -->
-        <select id="anuncio" name="anuncio" disabled style="color:#4b2b99;">
-          <option  value="<?php echo htmlspecialchars($anuncio_id); ?>" selected>
-            Anuncio nº <?php echo htmlspecialchars($anuncio_id); ?> — Piso luminoso en Madrid
-          </option>
-        </select>
-        <input type="hidden" name="anuncio" value="<?php echo htmlspecialchars($anuncio_id); ?>">
-        <p>* Este anuncio ha sido preseleccionado automáticamente.</p>
-      <?php else: ?>
-        <!-- Modo: acceso desde el menú -->
-        <select id="anuncio" name="anuncio" required>
-          <option value="">— Selecciona un anuncio —</option>
-          <option value="1">Piso céntrico en Madrid</option>
-          <option value="2">Apartamento en París</option>
-          <option value="3">Ático en Lisboa</option>
-        </select>
+      <?php
+        // Si se recibe anuncio_id por GET lo usamos para preseleccionar, pero permitimos cambiarlo.
+        $sel = $anuncio_id ? (int)$anuncio_id : 0;
+      ?>
+
+      <select id="anuncio" name="anuncio" required>
+        <option value="">— Selecciona un anuncio —</option>
+        <?php
+          // Cargar anuncios del usuario desde la base de datos
+          require_once('bd.php');
+          $userId = $_SESSION['idusuario'] ?? null;
+          if ($userId) {
+              $mysqli = obtenerConexion();
+              $sql = 'SELECT IdAnuncio, Titulo FROM Anuncios WHERE Usuario = ? ORDER BY IdAnuncio DESC';
+              if ($stmt = $mysqli->prepare($sql)) {
+                  $stmt->bind_param('i', $userId);
+                  $stmt->execute();
+                  $res = $stmt->get_result();
+                  while ($a = $res->fetch_assoc()) {
+                      $aid = (int)$a['IdAnuncio'];
+                      $titulo = $a['Titulo'] ?? ('Anuncio ' . $aid);
+                      $selAttr = ($sel === $aid) ? ' selected' : '';
+                      echo '<option value="' . htmlspecialchars($aid) . '"' . $selAttr . '>' . htmlspecialchars($titulo) . ' (id ' . htmlspecialchars($aid) . ')</option>';
+                  }
+                  $stmt->close();
+              }
+              $mysqli->close();
+          } else {
+              // No hay sesión; mostrar opción por defecto
+              echo '<option value="">(debes iniciar sesión para ver tus anuncios)</option>';
+          }
+        ?>
+      </select>
+
+      <?php if ($sel > 0): ?>
+        <p><em>* Se ha preseleccionado el anuncio nº <?php echo htmlspecialchars($sel); ?>; puedes cambiar la selección si lo deseas.</em></p>
+        <input type="hidden" name="preseleccionado" value="1">
       <?php endif; ?>
     </fieldset>
+
+    <?php require_once('flashdata.php');
+      $errores = get_flash('errores');
+      $ok = get_flash('ok');
+      if ($errores): ?>
+    <div class="mensaje-error">
+      <p><strong>Errores detectados:</strong></p>
+      <ul>
+        <?php foreach ($errores as $msg): ?>
+          <li><?php echo htmlspecialchars($msg); ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <?php elseif ($ok): ?>
+    <div class="mensaje-ok">
+      <p><?php echo htmlspecialchars($ok); ?></p>
+    </div>
+    <?php endif; ?>
 
     <p>
       <button type="submit" class="button">Guardar foto</button>

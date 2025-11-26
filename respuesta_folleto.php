@@ -2,16 +2,20 @@
 $title = "Confirmación de la solicitud de folleto";
 require_once("cabecera.inc");
 require_once("inicio.inc");
+require_once("bd.php");
 
 // Tarifas
 $COSTE_ENVIO = 10;
 $TARIFAS_PAGINAS = [
-    ['min' => 1, 'max' => 4, 'precio' => 2.0],
-    ['min' => 5, 'max' => 10, 'precio' => 1.8],
-    ['min' => 11, 'max' => 100, 'precio' => 1.6] // Asumimos máximo 100 páginas
+  ['min' => 1, 'max' => 4, 'precio' => 2.0],
+  ['min' => 5, 'max' => 10, 'precio' => 1.8],
+  ['min' => 11, 'max' => 100, 'precio' => 1.6]
 ];
 $PRECIO_COLOR = 0.5;
 $PRECIO_RES_ALTA = 0.2;
+
+// Parámetro configurable: fotos por página
+$FOTOS_POR_PAGINA = 3;
 
 // Datos enviados
 $nombre = trim($_POST['nombre'] ?? '');
@@ -28,14 +32,45 @@ $copias = max(1, intval($_POST['copias'] ?? 1));
 $resolucion = intval($_POST['resolucion'] ?? 150);
 $impresionColor = $_POST['impresionColor'] ?? 'bn';
 $imprimirPrecio = $_POST['imprimirPrecio'] ?? 'si';
-$anuncioUsuario = $_POST['anuncioUsuario'] ?? '';
+$anuncioUsuario = intval($_POST['anuncioUsuario'] ?? 0);
 $fechaRecepcion = $_POST['fechaRecepcion'] ?? '';
 
-// Valores ficticios
-$paginas = 5; // Número de páginas ficticio
-$fotos = 3;   // Número de fotos ficticio
+// Validaciones básicas
+$errores = [];
+if ($anuncioUsuario <= 0) $errores[] = 'Debes seleccionar un anuncio válido.';
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errores[] = 'Correo electrónico no válido.';
+if (mb_strlen($nombre) < 1) $errores[] = 'Nombre inválido.';
+if ($copias < 1 || $copias > 99) $errores[] = 'Número de copias fuera de rango.';
+if ($resolucion < 150 || $resolucion > 900) $errores[] = 'Resolución fuera de rango.';
+
+// Conexión para contar fotos y verificar anuncio
+$mysqli = obtenerConexion();
+$stmtCheck = $mysqli->prepare('SELECT Usuario FROM Anuncios WHERE IdAnuncio = ? LIMIT 1');
+$stmtCheck->bind_param('i', $anuncioUsuario);
+$stmtCheck->execute();
+$resCheck = $stmtCheck->get_result();
+if (!$rowCheck = $resCheck->fetch_assoc()) {
+  $stmtCheck->close();
+  $mysqli->close();
+  $errores[] = 'Anuncio no encontrado.';
+} else {
+  $stmtCheck->close();
+  // Contar fotos reales del anuncio
+  $stmtFotos = $mysqli->prepare('SELECT COUNT(*) AS n FROM Fotos WHERE Anuncio = ?');
+  $stmtFotos->bind_param('i', $anuncioUsuario);
+  $stmtFotos->execute();
+  $resFotos = $stmtFotos->get_result();
+  $nFotos = 0;
+  if ($filaF = $resFotos->fetch_assoc()) $nFotos = (int)$filaF['n'];
+  $stmtFotos->close();
+
+  // Calcular páginas a partir del número de fotos
+  $paginas = (int)ceil($nFotos / max(1, $FOTOS_POR_PAGINA));
+  $fotos = $nFotos;
+}
 
 // Calcular coste unitario
+// Determinar precio por página según tramo
 $precioPagina = 0;
 foreach($TARIFAS_PAGINAS as $tramo){
     if($paginas >= $tramo['min'] && $paginas <= $tramo['max']){
@@ -48,7 +83,26 @@ $costeUnitario = $COSTE_ENVIO + ($precioPagina * $paginas);
 if($impresionColor === 'color') $costeUnitario += $fotos * $PRECIO_COLOR;
 if($resolucion > 300) $costeUnitario += $fotos * $PRECIO_RES_ALTA;
 
+// Calcular coste total
 $costeTotal = $costeUnitario * $copias;
+
+// Si no hay errores, insertar la solicitud en la BD
+if (empty($errores)) {
+  $dirCompleta = trim($calle . ' ' . $numero . ', ' . $cp . ' ' . $localidad . ', ' . $provincia);
+  $iColor = ($impresionColor === 'color') ? 1 : 0;
+  $iPrecio = ($imprimirPrecio === 'si') ? 1 : 0;
+
+  $ins = $mysqli->prepare('INSERT INTO Solicitudes (Anuncio, Texto, Nombre, Email, Direccion, Telefono, Color, Copias, Resolucion, Fecha, IColor, IPrecio, Coste) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+  if ($ins) {
+      $ins->bind_param('issssssiisiid', $anuncioUsuario, $textoAdicional, $nombre, $email, $dirCompleta, $telefono, $colorPortada, $copias, $resolucion, $fechaRecepcion, $iColor, $iPrecio, $costeTotal);
+    $execOk = $ins->execute();
+    $ins->close();
+    if (!$execOk) $errores[] = 'No se pudo guardar la solicitud en la base de datos.';
+  } else {
+    $errores[] = 'Error interno preparando la inserción.';
+  }
+  $mysqli->close();
+}
 ?>
 
 <section aria-labelledby="conf">
@@ -111,6 +165,16 @@ $costeTotal = $costeUnitario * $copias;
     <legend>Importe total</legend>
     <dt><?= number_format($costeTotal, 2) ?> €</dt>
   </fieldset>
+  <?php if (!empty($errores)): ?>
+    <div class="mensaje-error">
+      <p><strong>Errores detectados:</strong></p>
+      <ul>
+        <?php foreach ($errores as $e): ?>
+          <li><?php echo htmlspecialchars($e); ?></li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  <?php endif; ?>
 </section>
 
 <section aria-labelledby="acciones">

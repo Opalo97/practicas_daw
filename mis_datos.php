@@ -9,6 +9,7 @@ $title = "Mis datos";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 require_once("bd.php");
+require_once('flashdata.php');
 
 $mysqli = obtenerConexion();
 
@@ -41,8 +42,26 @@ $mysqli->close();
 
 <section>
   <article>
+    <?php
+      $errores = get_flash('errores_mis_datos');
+      $ok = get_flash('ok_mis_datos');
+      if ($errores):
+    ?>
+      <div class="mensaje-error">
+        <p><strong>Errores detectados:</strong></p>
+        <ul>
+          <?php foreach ($errores as $m): ?>
+            <li><?php echo htmlspecialchars($m); ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php elseif ($ok): ?>
+      <div class="mensaje-ok">
+        <p><?php echo htmlspecialchars($ok); ?></p>
+      </div>
+    <?php endif; ?>
     
-    <form class="form-registro" method="post" action="#" enctype="multipart/form-data">
+    <form class="form-registro" method="post" action="respuesta_mis_datos.php" enctype="multipart/form-data">
 
       <fieldset>
         <legend>Datos de acceso</legend>
@@ -51,19 +70,24 @@ $mysqli->close();
         <input type="text" name="usuario"
                value="<?php echo htmlspecialchars($usuario['NomUsuario']); ?>" autocomplete="username" />
 
-        <label>Contraseña:</label>
-        <input type="password" name="clave" value="********" autocomplete="current-password" />
+        <p>Para confirmar los cambios debes introducir tu <strong>contraseña actual</strong>.</p>
+        <label>Contraseña actual:</label>
+        <input type="password" name="clave_actual" value="" autocomplete="current-password" />
 
-        <label>Repetir contraseña:</label>
-        <input type="password" name="clave2" value="********" autocomplete="new-password" />
+        <label>Nueva contraseña (opcional):</label>
+        <input type="password" name="nueva_clave" value="" autocomplete="new-password" />
+
+        <label>Repetir nueva contraseña:</label>
+        <input type="password" name="nueva_clave2" value="" autocomplete="new-password" />
       </fieldset>
 
       <fieldset>
         <legend>Datos personales</legend>
 
-        <label>Correo electrónico:</label>
-        <input type="email" name="email"
-               value="<?php echo htmlspecialchars($usuario['Email']); ?>" autocomplete="email" />
+         <label>Correo electrónico:</label>
+         <input type="text" name="email"
+           value="<?php echo htmlspecialchars($usuario['Email']); ?>" autocomplete="email" />
+         <small>El correo se valida en el servidor; introduce un email válido (ej: usuario@dominio.com).</small>
 
         <p>Sexo:</p>
         <label><input type="radio" name="sexo" value="1"
@@ -99,8 +123,7 @@ $mysqli->close();
       </fieldset>
 
       <p>
-        <input type="submit" class="button" value="Guardar cambios" disabled>
-        <!-- botón deshabilitado porque NO debe guardar -->
+        <input type="submit" class="button" value="Guardar cambios">
       </p>
 
     </form>
