@@ -1,81 +1,156 @@
 <?php
+session_start();
+$title = "Registro completado";
+require_once("bd.php");
 require_once("flashdata.php");
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once("filtros.php");
+require_once("cabecera.inc");
+require_once("inicio2.inc");
 
-error_reporting(E_ALL & ~E_NOTICE);
 
-$usuario = trim($_POST['usuario'] ?? "");
-$clave = trim($_POST['clave'] ?? "");
-$clave2 = trim($_POST['clave2'] ?? "");
-$email = trim($_POST['email'] ?? "");
-$sexo = $_POST['sexo'] ?? "";
-$fecha = $_POST['fecha'] ?? "";
-$ciudad = trim($_POST['ciudad'] ?? "");
-$pais = $_POST['pais'] ?? "";
+// ---------------------------
+// Recoger campos
+// ---------------------------
+$usuario   = $_POST['usuario'] ?? '';
+$clave     = $_POST['clave'] ?? '';
+$clave2    = $_POST['clave2'] ?? '';
+$email     = $_POST['email'] ?? '';
+$sexo      = $_POST['sexo'] ?? '';
+$fecha     = $_POST['fecha'] ?? '';
+$ciudad    = $_POST['ciudad'] ?? '';
+$pais      = $_POST['pais'] ?? '';
+$foto      = $_FILES['foto'] ?? null;
 
 $errores = [];
 
-if ($usuario === "" || ctype_space($usuario)) $errores[] = "El nombre de usuario es obligatorio.";
-if ($clave === "" || ctype_space($clave)) $errores[] = "La contraseña es obligatoria.";
-if ($clave2 === "" || ctype_space($clave2)) $errores[] = "Debes repetir la contraseña.";
-if ($clave !== "" && $clave2 !== "" && $clave !== $clave2) $errores[] = "Las contraseñas no coinciden.";
+// ======================================================
+// VALIDAR NOMBRE DE USUARIO
+// ======================================================
+$usuario = trim($usuario);
 
+if (!preg_match('/^[A-Za-z][A-Za-z0-9]{2,14}$/', $usuario)) {
+    $errores[] = "El nombre de usuario debe empezar por letra, tener 3–15 caracteres y solo usar letras y números.";
+}
+
+// ======================================================
+// VALIDAR CONTRASEÑA
+// ======================================================
+$claveValida = validar_password_registro($clave);
+
+if ($claveValida === false) {
+    $errores[] = "La contraseña debe tener 6–15 caracteres, incluir minúscula, mayúscula, número y sólo usar letras, números, '-' y '_'.";
+}
+
+// Repetir contraseña
+if ($clave !== $clave2) {
+    $errores[] = "Las contraseñas no coinciden.";
+}
+
+// ======================================================
+// VALIDAR EMAIL
+// ======================================================
+$emailValidado = validar_email($email);
+if ($emailValidado === false) {
+    $errores[] = "El email no es válido según el formato exigido.";
+}
+
+// ======================================================
+// VALIDAR SEXO
+// ======================================================
+if ($sexo !== "hombre" && $sexo !== "mujer") {
+    $errores[] = "Debes seleccionar un sexo.";
+}
+
+// ======================================================
+// VALIDAR FECHA DE NACIMIENTO + MAYOR DE 18 AÑOS
+// ======================================================
+$fecha = trim($fecha);
+
+if (!preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fecha)) {
+    $errores[] = "La fecha debe tener formato dd/mm/aaaa.";
+} else {
+    list($d,$m,$a) = explode('/', $fecha);
+
+    if (!checkdate((int)$m, (int)$d, (int)$a)) {
+        $errores[] = "La fecha de nacimiento no es válida.";
+    } else {
+        // Debe tener 18 años recién cumplidos
+        $fechaNacimiento = DateTime::createFromFormat('d/m/Y', $fecha);
+        $hoy = new DateTime();
+
+        $edad = $hoy->diff($fechaNacimiento)->y;
+        if ($edad < 18) {
+            $errores[] = "Debes tener al menos 18 años para registrarte.";
+        }
+    }
+}
+
+// ======================================================
+// SI HAY ERRORES -> VOLVER A signup.php
+// ======================================================
 if (!empty($errores)) {
     set_flash('errores', $errores);
     header("Location: signup.php");
-    exit();
+    exit;
 }
 
- 
-// SI TODO ESTÁ CORRECTO → MOSTRAR CONFIRMACIÓN
- 
-$title = "Confirmación de registro";
-require_once("cabecera.inc");
-require_once("inicio.inc");
-?>
+// ======================================================
+// INSERTAR EN BD
+// ======================================================
+$mysqli = obtenerConexion();
 
-<section>
-  
-  <p>Estos son los datos introducidos:</p>
+// Comprobar si el usuario existe
+$stmt = $mysqli->prepare("SELECT IdUsuario FROM usuarios WHERE NomUsuario = ?");
+$stmt->bind_param("s", $usuario);
+$stmt->execute();
+$stmt->store_result();
 
-  <fieldset>
-    <legend>Datos de acceso</legend>
-    <dl>
-      <dt>Nombre de usuario:</dt>
-      <dd><?php echo htmlspecialchars($usuario); ?></dd>
+if ($stmt->num_rows > 0) {
+    $stmt->close();
+    $errores[] = "El nombre de usuario ya existe.";
+    set_flash('errores', $errores);
+    header("Location: signup.php");
+    exit;
+}
+$stmt->close();
 
-      <dt>Contraseña:</dt>
-      <dd><?php echo str_repeat("•", strlen($clave)); // No mostrar texto real ?></dd>
-    </dl>
-  </fieldset>
+// Foto (aún NO se guarda en esta práctica)
+$fotoRuta = null;
 
-  <fieldset>
-    <legend>Datos personales</legend>
-    <dl>
-      <dt>Correo electrónico:</dt>
-      <dd><?php echo htmlspecialchars($email ?: "No especificado"); ?></dd>
+// Insertar usuario
+$sql = "INSERT INTO usuarios 
+        (NomUsuario, Clave, Email, Sexo, FNacimiento, Ciudad, Pais, Foto, FRegistro, Estilo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), 2)";
 
-      <dt>Sexo:</dt>
-      <dd><?php echo $sexo ? ucfirst(htmlspecialchars($sexo)) : "No indicado"; ?></dd>
+$stmt2 = $mysqli->prepare($sql);
 
-      <dt>Fecha de nacimiento:</dt>
-      <dd><?php echo htmlspecialchars($fecha ?: "No indicada"); ?></dd>
+// Convertir fecha a AAAA-MM-DD
+$fechaSQL = $a . "-" . $m . "-" . $d;
 
-      <dt>Ciudad:</dt>
-      <dd><?php echo htmlspecialchars($ciudad ?: "No indicada"); ?></dd>
+// Sexo numérico 1 hombre, 2 mujer (según tu BD)
+$sexoBD = ($sexo === "hombre") ? 1 : 2;
 
-      <dt>País:</dt>
-      <dd><?php echo htmlspecialchars($pais ?: "No indicado"); ?></dd>
-    </dl>
-  </fieldset>
+$stmt2->bind_param(
+    "sssisiss",
+    $usuario,
+    $claveValida,
+    $emailValidado,
+    $sexoBD,
+    $fechaSQL,
+    $ciudad,
+    $pais,
+    $fotoRuta
+);
 
-  <p><a class="enlaces" href="index.php">Volver a la página principal</a></p>
-</section>
+$stmt2->execute();
+$stmt2->close();
+$mysqli->close();
 
-</main>
+// ======================================================
+// REGISTRO COMPLETADO
+// ======================================================
 
-<?php
-require_once("footer.inc");
+echo "<p>Tu cuenta ha sido creada correctamente.</p>";
+echo "<p><a class='button' href='login.php'>Iniciar sesión</a></p>";
+echo "<p><a class='enlaces' href='index.php'>Volver al inicio</a></p>";
 ?>

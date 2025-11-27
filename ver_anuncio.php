@@ -122,8 +122,27 @@ $fotos_priv = true;
 // ------------------------------------------------------
 // 6. Incluir plantilla de mostrar anuncio
 // ------------------------------------------------------
+
+
 require("mostrar_anuncio.inc.php");
 
+?>
+
+<?php if (isset($_SESSION['idusuario']) && $_SESSION['idusuario'] == $anuncio['Usuario']): ?>
+    <p style="margin-top:20px;">
+        <a href="modificar_anuncio.php?id=<?= $anuncio['IdAnuncio'] ?>" class="button">
+            Modificar anuncio
+        </a>
+        <a href="eliminar_anuncio.php?id=<?= $anuncio['IdAnuncio'] ?>" class="button" style="background:#c00000; color:white; padding:10px 20px;
+                  border-radius:6px; display:inline-block;">
+            Eliminar anuncio
+        </a>
+    </p>
+<?php endif; ?>
+
+
+
+<?php
 $mysqli->close();
 require_once("footer.inc");
 ?>

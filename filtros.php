@@ -121,3 +121,26 @@ function validar_texto_alternativo($alt) {
 
     return $a;
 }
+
+function validar_password_registro($clave) {
+    $clave = trim($clave);
+
+    if ($clave === '') return false;
+
+    // Longitud 6–15
+    if (mb_strlen($clave) < 6 || mb_strlen($clave) > 15) return false;
+
+    // Solo letras inglesas, números, guion y guion bajo
+    if (!preg_match('/^[A-Za-z0-9_-]+$/', $clave)) return false;
+
+    // Al menos 1 mayúscula
+    if (!preg_match('/[A-Z]/', $clave)) return false;
+
+    // Al menos 1 minúscula
+    if (!preg_match('/[a-z]/', $clave)) return false;
+
+    // Al menos 1 número
+    if (!preg_match('/[0-9]/', $clave)) return false;
+
+    return $clave;
+}
