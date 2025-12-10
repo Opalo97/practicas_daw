@@ -50,7 +50,8 @@ $resUsu->free();
 $idUsuario    = (int)$usuario['IdUsuario'];
 $nomUsuario   = htmlspecialchars($usuario['NomUsuario'] ?? '', ENT_QUOTES, 'UTF-8');
 $fotoPerfil   = $usuario['Foto'] ?? null;
-$fotoPerfilH  = $fotoPerfil ? htmlspecialchars($fotoPerfil, ENT_QUOTES, 'UTF-8') : '';
+// Usar icono por defecto si no hay foto
+$fotoPerfilH  = $fotoPerfil ? htmlspecialchars($fotoPerfil, ENT_QUOTES, 'UTF-8') : 'img/user_default.svg';
 $fechaRegRaw  = $usuario['FRegistro'];
 $fechaAlta    = $fechaRegRaw ? date('d/m/Y', strtotime($fechaRegRaw)) : 'Desconocida';
 
@@ -87,13 +88,9 @@ if ($resAn = $mysqli->query($sqlAnuncios)) {
     <fieldset>
       <legend>Datos del usuario</legend>
       <div class="perfil-usuario">
-        <?php if (!empty($fotoPerfilH)): ?>
-          <div class="foto-perfil">
-            <img src="<?php echo $fotoPerfilH; ?>" alt="Foto de perfil de <?php echo $nomUsuario; ?>">
-          </div>
-        <?php else: ?>
-          <p>Este usuario no tiene foto de perfil.</p>
-        <?php endif; ?>
+        <div class="foto-perfil">
+          <img src="<?php echo $fotoPerfilH; ?>" alt="Foto de perfil de <?php echo $nomUsuario; ?>" style="max-width:150px;">
+        </div>
 
         <dl>
           <dt>Nombre de usuario:</dt>

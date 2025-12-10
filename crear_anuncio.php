@@ -6,6 +6,7 @@ $title = "Crear un anuncio nuevo";
 require_once("cabecera.inc");
 require_once("inicio.inc");
 require_once("bd.php");
+require_once("filtros.php");
 
 // ===============================
 // CONTROL DE ACCESO
@@ -54,38 +55,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (empty($errores)) {
 
+        // ===================================================================
         // ===============================
-        // 1. GUARDAR FOTO PRINCIPAL
+        // 1. INSERTAR ANUNCIO PRIMERO
         // ===============================
-        $nombre_tmp = $_FILES['foto_principal']['tmp_name'];
-        $nombre_real = basename($_FILES['foto_principal']['name']);
-        $destino = 'img/' . time() . '_' . $nombre_real;
-
-        if (!move_uploaded_file($nombre_tmp, $destino)) {
-            echo "<p>Error al guardar la imagen.</p>";
-            require_once("footer.inc");
-            exit;
-        }
-
-        if ($alt_foto === "") {
-            $alt_foto = "Foto del anuncio";
-        }
-
-        // ===============================
-        // 2. INSERTAR ANUNCIO
-        // ===============================
+        // Necesitamos el IdAnuncio para generar el nombre único de la foto
+        // Por eso insertamos el anuncio con FPrincipal = NULL temporalmente
+        // ===================================================================
         $sql = "INSERT INTO Anuncios 
                 (TAnuncio, TVivienda, FPrincipal, Alternativo, Titulo, Precio, Texto,
                  Ciudad, Pais, Superficie, NHabitaciones, NBanyos, Planta, Anyo, FRegistro, Usuario)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $mysqli->prepare($sql);
+        // Usar valores temporales para FPrincipal y Alternativo, los actualizaremos después
+        $fprincipalTemp = NULL;
+        $alternativoTemp = $alt_foto ?: "Foto del anuncio";
+        
         $stmt->bind_param(
             "iisssdsssiiiiiis",
             $tipo_anuncio,
             $tipo_vivienda,
-            $destino,
-            $alt_foto,
+            $fprincipalTemp,
+            $alternativoTemp,
             $titulo,
             $precio,
             $descripcion,
@@ -110,17 +102,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
 
 
+        // ===================================================================
         // ===============================
-        // 3. INSERTAR FOTO PRINCIPAL EN FOTOS
+        // 2. PROCESAR FOTO PRINCIPAL
         // ===============================
-        $sqlFoto = "INSERT INTO Fotos (Titulo, Foto, Alternativo, Anuncio)
-                    VALUES (?, ?, ?, ?)";
+        // Si el usuario subió una foto, procesarla y actualizar el anuncio
+        // Usa la misma estrategia anti-colisiones que "añadir foto a anuncio"
+        // ===================================================================
+        $destino = NULL;
+        if (isset($_FILES['foto_principal']) && $_FILES['foto_principal']['error'] !== UPLOAD_ERR_NO_FILE) {
+            // Directorio destino
+            $destAnun = __DIR__ . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'anuncios';
+            $userId = (int)$_SESSION['idusuario'];
+            // Procesar subida con nombre único: anun_{userId}_{anuncioId}_{timestamp}_{random}.ext
+            $proc = procesar_foto_anuncio($_FILES['foto_principal'], $destAnun, $userId, $idAnuncioNuevo);
+            
+            if (!$proc['ok']) {
+                // Si falla la subida, hacer rollback: eliminar el anuncio que acabamos de crear
+                $mysqli->query("DELETE FROM Anuncios WHERE IdAnuncio = $idAnuncioNuevo");
+                echo "<p>Error al guardar la foto: " . htmlspecialchars($proc['error']) . "</p>";
+                require_once("footer.inc");
+                exit;
+            }
+            
+            $destino = $proc['ruta'];
+            
+            // Actualizar el anuncio con la ruta real de la foto
+            $sqlUpdate = "UPDATE Anuncios SET FPrincipal = ? WHERE IdAnuncio = ?";
+            $stmtUpd = $mysqli->prepare($sqlUpdate);
+            $stmtUpd->bind_param("si", $destino, $idAnuncioNuevo);
+            $stmtUpd->execute();
+            $stmtUpd->close();
+        }
 
-        $stmt2 = $mysqli->prepare($sqlFoto);
-        $tituloFoto = null;
-        $stmt2->bind_param("sssi", $tituloFoto, $destino, $alt_foto, $idAnuncioNuevo);
-        $stmt2->execute();
-        $stmt2->close();
+
+        // ===================================================================
+        // ===============================
+        // 3. INSERTAR EN TABLA FOTOS
+        // ===============================
+        // Además de FPrincipal, guardar también en la tabla Fotos
+        // para que aparezca en el listado de fotos del anuncio
+        // ===================================================================
+        if ($destino) {
+            $sqlFoto = "INSERT INTO Fotos (Titulo, Foto, Alternativo, Anuncio)
+                        VALUES (?, ?, ?, ?)";
+
+            $stmt2 = $mysqli->prepare($sqlFoto);
+            $tituloFoto = $titulo; // Usar el título del anuncio como título de la foto
+            $alternativoFoto = $alt_foto ?: "Foto del anuncio";
+            $stmt2->bind_param("sssi", $tituloFoto, $destino, $alternativoFoto, $idAnuncioNuevo);
+            $stmt2->execute();
+            $stmt2->close();
+        }
 
 
         // ===============================

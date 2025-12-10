@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-11-2025 a las 22:14:02
+-- Tiempo de generación: 10-12-2025 a las 13:39:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -105,12 +105,15 @@ INSERT INTO `fotos` (`IdFoto`, `Titulo`, `Foto`, `Alternativo`, `Anuncio`) VALUE
 (2, NULL, 'img/foto_piso2.jpg', 'Salón del piso', 1),
 (5, NULL, 'img/foto_piso5.jpeg', 'Baño principal', 1),
 (6, NULL, 'img/foto_piso6.jpeg', 'Balcón del piso', 1),
-(9, NULL, 'img/piso3.jpg', 'Salón del ático', 2),
+(7, NULL, 'img/piso.jpg', 'Foto principal del ático', 2),
+(9, NULL, 'img/piso3.jpeg', 'Salón del ático', 2),
 (13, NULL, 'img/foto_piso.jpg', 'Foto principal', 3),
-(25, NULL, 'img/piso3.jpg', 'Foto principal del ático', 5),
+(25, NULL, 'img/piso3.jpeg', 'Foto principal del ático', 5),
 (31, 'Salon', 'img/foto_piso1.jpg', 'Curiosidades Fascinantes', 1),
 (32, 'Salom', 'img/foto_piso2.jpg', 'Curiosidades Fas', 1),
-(33, 'Salon', 'img/foto_piso2.jpg', 'Curiosidades Fas', 3);
+(33, 'Salon', 'img/foto_piso2.jpg', 'Curiosidades Fas', 3),
+(43, 'Salon', 'img/anuncios/anun_1_5_1765365845_0b3a4b33.jpg', 'Curiosidades Fascinantes sobre la Música', 5),
+(44, 'Salon', 'img/anuncios/anun_1_1_1765366080_00566a83.jpg', 'Curiosidades Fas', 1);
 
 -- --------------------------------------------------------
 
@@ -275,10 +278,10 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `NomUsuario`, `Clave`, `Email`, `Sexo`, `FNacimiento`, `Ciudad`, `Pais`, `Foto`, `FRegistro`, `Estilo`) VALUES
-(1, 'juan', 'juan1234', 'juan@example.com', 1, NULL, NULL, 4, 'img/juan.jpg', '2025-11-13 10:40:00', 1),
-(2, 'maria', 'abcd', 'maria@example.com', NULL, NULL, NULL, NULL, 'img/maria.jpg', '2025-11-13 10:40:00', 2),
-(8, 'lolita', 'lolita1234L', 'lolita@gmail.com', 2, '1999-10-10', '0', 1, NULL, '2025-11-27 22:09:16', 2),
-(9, 'pere', 'pere1234P', 'pere@gmail.com', 1, '1999-03-02', '0', 1, NULL, '2025-11-27 22:12:03', 2);
+(1, 'juan', '$2y$10$crGvxa2uPy0brEdXKvfjN.wdMK6TENIH5TrAec.Xpyp62IMP9S/uS', 'juan@example.com', 1, NULL, NULL, 4, 'img/usuarios/usr_69395d58d1ce8.jpg', '2025-11-13 10:40:00', 1),
+(2, 'maria', '$2y$10$fBRFjAH/asaGCbC4bk.RtOLi.Lps5ry4dVZIbJOTEiSI3FTodcFzm', 'maria@example.com', NULL, NULL, NULL, NULL, 'img/maria.jpg', '2025-11-13 10:40:00', 2),
+(8, 'lolita', '$2y$10$JkxUP4V/Zoriwu95D.mjN.nkbUr15BvKZKQS9FKWucClSpuj7DhdG', 'lolita@gmail.com', 2, '1999-10-10', NULL, 1, 'img/usuarios/usr_693962bfacb12.jpg', '2025-11-27 22:09:16', 2),
+(9, 'pere', '$2y$10$zYns3kuTJjv/hgN9Jynzd.hs61Kc1lWiumKgXMQYc0gM03oxA367q', 'pere@gmail.com', 1, '1999-03-02', '0', 1, NULL, '2025-11-27 22:12:03', 2);
 
 --
 -- Índices para tablas volcadas
@@ -365,7 +368,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `anuncios`
 --
 ALTER TABLE `anuncios`
-  MODIFY `IdAnuncio` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `IdAnuncio` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `estilos`
@@ -377,7 +380,7 @@ ALTER TABLE `estilos`
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `IdFoto` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT de la tabla `mensajes`

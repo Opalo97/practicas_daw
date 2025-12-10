@@ -60,35 +60,120 @@ function validar_claves_nuevas($c1, $c2) {
     return $c1;
 }
 
-/** Valida upload de imagen simple y devuelve array con 'ok' y 'ruta' o 'error' */
+/**
+ * Procesa la subida de una foto de perfil de usuario
+ * 
+ * @param array $file - Array $_FILES['campo'] con el fichero subido
+ * @param string $destDir - Directorio de destino ABSOLUTO (ej: /ruta/completa/img/usuarios)
+ * @return array - ['ok' => true/false, 'ruta' => ruta_relativa o null, 'error' => mensaje]
+ * 
+ * Funcionalidad:
+ * - Valida que sea imagen (jpg/png/gif) mediante MIME type real del fichero
+ * - Genera nombre único con uniqid() para evitar colisiones entre usuarios
+ * - Crea el directorio img/usuarios/ si no existe
+ * - Mueve el fichero desde tmp a img/usuarios/usr_XXXXX.ext
+ * - Devuelve ruta relativa para guardar en BD (ej: 'img/usuarios/usr_abc123.jpg')
+ */
 function procesar_foto_subida($file, $destDir)
 {
+    // Si no hay fichero subido, devolver OK sin ruta
     if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) return ['ok'=>true, 'ruta'=>null];
 
+    // Verificar que la subida fue exitosa
     if ($file['error'] !== UPLOAD_ERR_OK) return ['ok'=>false, 'error'=>'Error al subir fichero.'];
 
+    // Detectar tipo MIME real del fichero (no confiar en la extensión del nombre)
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
 
+    // Validar que sea una imagen permitida y asignar extensión
     $ext = null;
     if ($mime === 'image/jpeg') $ext = 'jpg';
     elseif ($mime === 'image/png') $ext = 'png';
     elseif ($mime === 'image/gif') $ext = 'gif';
     else return ['ok'=>false, 'error'=>'Formato de imagen no permitido.'];
 
+    // Crear directorio si no existe (0755 = permisos lectura/escritura)
     if (!is_dir($destDir) && !mkdir($destDir, 0755, true)) {
         return ['ok'=>false, 'error'=>'No se puede crear directorio de destino.'];
     }
 
+    // Generar nombre único: usr_ + ID único basado en microsegundos + extensión
     $nombre = uniqid('usr_') . '.' . $ext;
+    // Ruta relativa para guardar en BD
     $rutaRel = 'img/usuarios/' . $nombre;
-    $rutaAbs = __DIR__ . DIRECTORY_SEPARATOR . $rutaRel;
+    // Ruta absoluta para mover el fichero
+    $rutaAbs = rtrim($destDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $nombre;
 
+    // Mover fichero desde temporal a destino final
     if (!move_uploaded_file($file['tmp_name'], $rutaAbs)) {
         return ['ok'=>false, 'error'=>'No se pudo mover el fichero subido.'];
     }
 
+    return ['ok'=>true, 'ruta'=>$rutaRel];
+}
+
+/**
+ * Procesa la subida de una foto de anuncio con estrategia anti-colisiones
+ * 
+ * @param array $file - Array $_FILES['campo'] con el fichero subido
+ * @param string $destDir - Directorio de destino ABSOLUTO (ej: /ruta/completa/img/anuncios)
+ * @param int $userId - ID del usuario propietario
+ * @param int $anuncioId - ID del anuncio al que pertenece la foto
+ * @return array - ['ok' => true/false, 'ruta' => ruta_relativa o null, 'error' => mensaje]
+ * 
+ * Funcionalidad:
+ * - Valida que sea imagen (jpg/png/gif) mediante MIME type real
+ * - Genera nombre ÚNICO con múltiples componentes para evitar colisiones:
+ *   anun_{userId}_{anuncioId}_{timestamp}_{random}.ext
+ *   Ejemplo: anun_5_123_1702234567_a1b2c3d4.jpg
+ * - Esto previene colisiones cuando:
+ *   * Dos usuarios suben fotos con el mismo nombre original
+ *   * Un usuario sube la misma foto a diferentes anuncios
+ *   * Un usuario sube dos veces la misma foto al mismo anuncio
+ * - Crea el directorio img/anuncios/ si no existe
+ * - Devuelve ruta relativa para guardar en BD
+ */
+function procesar_foto_anuncio($file, $destDir, $userId, $anuncioId)
+{
+    // Si no hay fichero subido, devolver OK sin ruta
+    if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) return ['ok'=>true, 'ruta'=>null];
+    // Verificar que la subida fue exitosa
+    if ($file['error'] !== UPLOAD_ERR_OK) return ['ok'=>false, 'error'=>'Error al subir fichero.'];
+
+    // Detectar tipo MIME real del fichero
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    // Validar formato de imagen y asignar extensión
+    $ext = null;
+    if ($mime === 'image/jpeg') $ext = 'jpg';
+    elseif ($mime === 'image/png') $ext = 'png';
+    elseif ($mime === 'image/gif') $ext = 'gif';
+    else return ['ok'=>false, 'error'=>'Formato de imagen no permitido.'];
+
+    // Crear directorio si no existe
+    if (!is_dir($destDir) && !mkdir($destDir, 0755, true)) {
+        return ['ok'=>false, 'error'=>'No se puede crear directorio de destino.'];
+    }
+
+    // Generar nombre único con múltiples componentes:
+    // - userId: identifica al propietario
+    // - anuncioId: identifica el anuncio
+    // - time(): timestamp Unix (segundos desde 1970)
+    // - random_bytes(4): 4 bytes aleatorios = 8 caracteres hex
+    $rand = bin2hex(random_bytes(4));
+    $nombre = 'anun_' . (int)$userId . '_' . (int)$anuncioId . '_' . time() . '_' . $rand . '.' . $ext;
+    // Ruta relativa para BD
+    $rutaRel = 'img/anuncios/' . $nombre;
+    // Ruta absoluta para mover el fichero
+    $rutaAbs = rtrim($destDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $nombre;
+
+    if (!move_uploaded_file($file['tmp_name'], $rutaAbs)) {
+        return ['ok'=>false, 'error'=>'No se pudo mover el fichero subido.'];
+    }
     return ['ok'=>true, 'ruta'=>$rutaRel];
 }
 

@@ -19,11 +19,7 @@ $anuncio_id = isset($_GET['anuncio_id']) ? $_GET['anuncio_id'] : null;
 
       <!-- Campo de subida -->
       <label for="foto">Selecciona la foto:</label><br>
-      <input type="file" id="foto" name="foto" accept="image/*"><br>
-      <small>Opcional: si ya has subido el fichero manualmente al servidor, indica su ruta abajo.</small><br><br>
-
-      <label for="ruta_foto">Ruta del fichero en el servidor (ej: img/mi_foto.jpg)</label><br>
-      <input type="text" id="ruta_foto" name="ruta_foto" placeholder="img/mi_foto.jpg"><br><br>
+      <input type="file" id="foto" name="foto" accept="image/*"><br><br>
 
       <!-- Texto alternativo -->
       <label for="alt">Texto alternativo (para accesibilidad):</label><br>

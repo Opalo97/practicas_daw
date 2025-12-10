@@ -86,6 +86,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
 
+      // ===================================================================
+      // 0) BORRAR FICHEROS FÍSICOS ANTES DE ELIMINAR EN BD
+      // ===================================================================
+      // Recopilar todas las rutas de fotos que hay que borrar del servidor
+      $paths = [];
+        
+      // Consultar todas las fotos asociadas a este anuncio
+      $sql = "SELECT Foto FROM fotos WHERE Anuncio = ?";
+      $stmt = $mysqli->prepare($sql);
+      $stmt->bind_param("i", $idAnuncio);
+      $stmt->execute();
+      $resF = $stmt->get_result();
+      // Guardar cada ruta en el array
+      while ($rf = $resF->fetch_assoc()) {
+        if (!empty($rf['Foto'])) $paths[] = $rf['Foto'];
+      }
+      $stmt->close();
+
+      // Añadir también la foto principal del anuncio (FPrincipal)
+      if (!empty($anuncio['FPrincipal'])) {
+        $paths[] = $anuncio['FPrincipal'];
+      }
+
+      // Borrar cada fichero físico del servidor de forma segura
+      $base = realpath(__DIR__); // Ruta base del proyecto
+      foreach ($paths as $p) {
+        // Obtener ruta absoluta real del fichero
+        $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $p);
+        // Validación de seguridad: solo borrar si está dentro del proyecto
+        if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+          @unlink($rutaAbs); // Borrar fichero (@ suprime warnings)
+        }
+      }
+
         // 1) Borrar fotos del anuncio
         $sql = "DELETE FROM fotos WHERE Anuncio = ?";
         $stmt = $mysqli->prepare($sql);

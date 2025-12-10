@@ -18,7 +18,10 @@ if ($usuario && $password) {
 
     if ($fila = $resultado->fetch_assoc()) {
 
-        if ($password === $fila['Clave']) {
+        // Verificar contraseña usando password_verify()
+        // Compara el texto plano con el hash almacenado en BD
+        // Funciona con contraseñas hasheadas mediante password_hash()
+        if (password_verify($password, $fila['Clave'])) {
 
             // Guardar sesión
             $_SESSION['usuario'] = $fila['NomUsuario'];

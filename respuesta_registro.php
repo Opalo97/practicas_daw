@@ -114,8 +114,30 @@ if ($stmt->num_rows > 0) {
 }
 $stmt->close();
 
-// Foto (aún NO se guarda en esta práctica)
-$fotoRuta = null;
+// ======================================================
+// PROCESAR FOTO DE PERFIL (OPCIONAL)
+// ======================================================
+// Construir ruta absoluta del directorio de fotos de usuario
+$destUsuarios = __DIR__ . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'usuarios';
+// Procesar subida: valida MIME, genera nombre único, mueve el fichero
+$fotoProc = procesar_foto_subida($foto, $destUsuarios);
+if (!$fotoProc['ok']) {
+    // Si hay error en la subida, volver al formulario
+    $errores[] = $fotoProc['error'];
+    set_flash('errores', $errores);
+    header("Location: signup.php");
+    exit;
+}
+// Obtener ruta relativa para guardar en BD (ej: 'img/usuarios/usr_abc123.jpg')
+$fotoRuta = $fotoProc['ruta'] ?? null;
+
+// ======================================================
+// HASHEAR LA CONTRASEÑA
+// ======================================================
+// Usar password_hash() con bcrypt (PASSWORD_DEFAULT)
+// Esto genera un hash de 60 caracteres que NO se puede revertir
+// Así la contraseña no se ve en texto plano en phpMyAdmin
+$claveHash = password_hash($claveValida, PASSWORD_DEFAULT);
 
 // Insertar usuario
 $sql = "INSERT INTO usuarios 
@@ -133,7 +155,7 @@ $sexoBD = ($sexo === "hombre") ? 1 : 2;
 $stmt2->bind_param(
     "sssisiss",
     $usuario,
-    $claveValida,
+    $claveHash,
     $emailValidado,
     $sexoBD,
     $fechaSQL,
@@ -150,7 +172,26 @@ $mysqli->close();
 // REGISTRO COMPLETADO
 // ======================================================
 
-echo "<p>Tu cuenta ha sido creada correctamente.</p>";
-echo "<p><a class='button' href='login.php'>Iniciar sesión</a></p>";
-echo "<p><a class='enlaces' href='index.php'>Volver al inicio</a></p>";
+require_once('cabecera.inc');
+require_once('inicio2.inc');
+?>
+<section>
+    <article>
+        <h2>Registro completado</h2>
+        <p>Tu cuenta ha sido creada correctamente.</p>
+        <?php /* Mostrar miniatura de la foto subida para que el usuario verifique que es correcta */ ?>
+        <?php if (!empty($fotoRuta)): ?>
+            <div class="foto-preview">
+                <p>Tu foto de perfil subida:</p>
+                <img src="<?php echo htmlspecialchars($fotoRuta); ?>" alt="Foto de perfil" style="max-width:200px; border:1px solid #ccc; padding:4px;">
+            </div>
+        <?php endif; ?>
+        <p><a class="button" href="login.php">Iniciar sesión</a></p>
+        <p><a class="enlaces" href="index.php">Volver al inicio</a></p>
+    </article>
+</section>
+
+</main>
+
+<?php require_once('footer.inc'); ?>
 ?>

@@ -21,6 +21,7 @@ $sexo = isset($_POST['sexo']) ? (int)$_POST['sexo'] : null;
 $fecha = $_POST['fecha'] ?? '';
 $ciudad = $_POST['ciudad'] ?? '';
 $pais = $_POST['pais'] ?? '';
+$eliminarFoto = isset($_POST['eliminar_foto']) && $_POST['eliminar_foto'] == '1';
 
 $errores = [];
 
@@ -63,8 +64,13 @@ $claveBD = $row['Clave'];
 $fotoActual = $row['Foto'];
 $stmt->close();
 
-// Comprobar contraseña actual (la aplicación usa texto plano en este proyecto)
-if ($claveActual !== $claveBD) {
+// ======================================================
+// VERIFICAR CONTRASEÑA ACTUAL
+// ======================================================
+// Usar password_verify() para comparar:
+// - $claveActual: texto plano introducido por el usuario
+// - $claveBD: hash almacenado en la base de datos
+if (!password_verify($claveActual, $claveBD)) {
     $mysqli->close();
     set_flash('errores_mis_datos', ['Contraseña actual incorrecta.']);
     header('Location: mis_datos.php');
@@ -105,15 +111,52 @@ $campos[] = 'FNacimiento = ?'; $types .= 's'; $params[] = $fechaVal ?? null;
 $campos[] = 'Ciudad = ?'; $types .= 's'; $params[] = limpiar_texto($ciudad) ?: null;
 $campos[] = 'Pais = ?'; $types .= 'i'; $params[] = $pais ?: null;
 
+// ======================================================
+// HASHEAR NUEVA CONTRASEÑA SI HAY CAMBIO
+// ======================================================
 if ($clavesVal !== null) {
-    $campos[] = 'Clave = ?'; $types .= 's'; $params[] = $clavesVal;
+    // Generar hash seguro de la nueva contraseña
+    // PASSWORD_DEFAULT usa bcrypt (60 caracteres)
+    $claveHash = password_hash($clavesVal, PASSWORD_DEFAULT);
+    $campos[] = 'Clave = ?'; $types .= 's'; $params[] = $claveHash;
 }
 
-if (!empty($fotoRes['ruta'])) {
+// ======================================================
+// GESTIÓN DE FOTO DE PERFIL
+// ======================================================
+// Tres opciones posibles:
+// 1. Usuario marca "eliminar foto" -> borrar fichero físico y poner NULL en BD
+// 2. Usuario sube nueva foto -> borrar anterior, subir nueva, actualizar BD
+// 3. No hace nada con la foto -> mantener la actual (no tocar el campo Foto)
+if ($eliminarFoto) {
+    // OPCIÓN 1: ELIMINAR FOTO
+    // Borrar el fichero físico del servidor si existe
+    if ($fotoActual) {
+        // realpath() obtiene la ruta absoluta real del fichero
+        $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $fotoActual);
+        // Validar que el fichero está dentro del proyecto (seguridad)
+        $base = realpath(__DIR__);
+        if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+            // @ suprime warnings si el fichero ya no existe
+            @unlink($rutaAbs);
+        }
+    }
+    // Poner NULL en BD para mostrar el icono por defecto
+    $campos[] = 'Foto = NULL';
+} elseif (!empty($fotoRes['ruta'])) {
+    // OPCIÓN 2: REEMPLAZAR CON NUEVA FOTO
+    // Primero borrar la foto anterior del servidor
+    if ($fotoActual) {
+        $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $fotoActual);
+        $base = realpath(__DIR__);
+        if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+            @unlink($rutaAbs);
+        }
+    }
+    // Guardar la ruta de la nueva foto en BD
     $campos[] = 'Foto = ?'; $types .= 's'; $params[] = $fotoRes['ruta'];
-} else {
-    // mantener foto actual
 }
+// OPCIÓN 3: Si no se cumple ninguna condición, no se modifica el campo Foto
 
 $params[] = $idUsuario; $types .= 'i';
 
@@ -151,7 +194,14 @@ if ($clavesVal !== null || $usuarioVal !== $usuarioAntes) {
 
 // Actualizar sesión (nombre de usuario y foto si cambiaron)
 $_SESSION['usuario'] = $usuarioVal;
-if (!empty($fotoRes['ruta'])) $_SESSION['foto'] = $fotoRes['ruta'];
+// Actualizar la foto en la sesión según la acción realizada
+if ($eliminarFoto) {
+    // Si se eliminó, quitar de la sesión para que se use el icono por defecto
+    unset($_SESSION['foto']);
+} elseif (!empty($fotoRes['ruta'])) {
+    // Si se subió nueva, actualizar la sesión con la nueva ruta
+    $_SESSION['foto'] = $fotoRes['ruta'];
+}
 
 set_flash('ok_mis_datos', 'Tus datos se han actualizado correctamente.');
 // Mostrar la confirmación

@@ -22,6 +22,7 @@ $idAnuncio = $idAnuncioRaw !== null ? (int)filter_var($idAnuncioRaw, FILTER_SANI
 $titulo = $_POST['titulo_foto'] ?? '';
 $alt = $_POST['alt'] ?? '';
 $ruta_input = trim($_POST['ruta_foto'] ?? '');
+$fileUpload = $_FILES['foto'] ?? null;
 
 $errores = [];
 
@@ -33,21 +34,40 @@ if ($tituloVal === false) $errores[] = 'El título de la foto es obligatorio.';
 $altVal = validar_texto_alternativo($alt);
 if ($altVal === false) $errores[] = 'El texto alternativo es obligatorio, mínimo 10 caracteres y no puede empezar por "foto" o "imagen".';
 
-// Determinar ruta del fichero: en esta práctica NO se gestiona el almacenamiento.
-// Por tanto, el usuario debe proporcionar la ruta relativa al fichero ya existente en el servidor.
+// ======================================================
+// PROCESAR SUBIDA DE FOTO DE ANUNCIO
+// ======================================================
+// Dos opciones:
+// 1. Usuario sube fichero con <input type="file"> (preferido)
+// 2. Usuario indica ruta de fichero ya existente en servidor (fallback, legacy)
 $rutaFoto = null;
-if ($ruta_input !== '') {
-    // Validar existencia del fichero en servidor (ruta relativa al proyecto)
+if (isset($fileUpload) && $fileUpload['error'] !== UPLOAD_ERR_NO_FILE) {
+    // OPCIÓN 1: PROCESAR FICHERO SUBIDO
+    // Directorio destino para fotos de anuncios
+    $destAnun = __DIR__ . DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR . 'anuncios';
+    $userId = (int)$_SESSION['idusuario'];
+    // Usar procesar_foto_anuncio() que:
+    // - Valida MIME (jpg/png/gif)
+    // - Genera nombre único: anun_{userId}_{anuncioId}_{timestamp}_{random}.ext
+    // - Mueve el fichero a img/anuncios/
+    $proc = procesar_foto_anuncio($fileUpload, $destAnun, $userId, $idAnuncio);
+    if (!$proc['ok']) {
+        $errores[] = $proc['error'];
+    } else {
+        $rutaFoto = $proc['ruta'];
+    }
+} elseif ($ruta_input !== '') {
+    // OPCIÓN 2: VALIDAR RUTA EXISTENTE (solo si no se subió fichero)
+    // Este es un fallback para ficheros ya subidos manualmente
     $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $ruta_input);
     $base = realpath(__DIR__);
     if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
-        // Usar la ruta tal cual (relativa)
         $rutaFoto = $ruta_input;
     } else {
         $errores[] = 'La ruta indicada no existe en el servidor: ' . htmlspecialchars($ruta_input);
     }
 } else {
-    $errores[] = 'Debes indicar la ruta del fichero en el servidor (sube el fichero manualmente y usa su ruta).';
+    $errores[] = 'Debes subir una foto o indicar una ruta válida en el servidor.';
 }
 
 if (!empty($errores)) {

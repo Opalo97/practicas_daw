@@ -11,7 +11,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once("bd.php"); // Conexión a la BD
 
-// ---------- Restaurar sesión desde cookies ----------
+// ---------- Restaurar sesión desde cookies (función "Recordarme") ----------
+// Si existen las cookies de usuario y contraseña, intentar login automático
 if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
     $mysqli = obtenerConexion();
 
@@ -21,7 +22,9 @@ if (isset($_COOKIE['usuario']) && isset($_COOKIE['password'])) {
     $resultado = $stmt->get_result();
 
     if ($fila = $resultado->fetch_assoc()) {
-        if ($_COOKIE['password'] === $fila['Clave']) {
+      // Verificar que la contraseña de la cookie coincide con el hash en BD
+      // password_verify() compara texto plano (cookie) con hash (BD)
+        if (password_verify($_COOKIE['password'], $fila['Clave'])) {
             $_SESSION['usuario'] = $fila['NomUsuario'];
             header("Location: index.php");
             exit;

@@ -5,35 +5,46 @@ ini_set('display_errors', '0');
 ?>
 
 <?php
-ob_start();
-session_start();
-require_once("cabecera.inc");
-require_once("inicio.inc");
-require_once("bd.php");
+      // ===================================================================
+      // 0) BORRAR TODOS LOS FICHEROS FÍSICOS DEL USUARIO
+      // ===================================================================
+      // Al darse de baja, eliminar del servidor:
+      // 1. Foto de perfil del usuario
+      // 2. Todas las fotos de todos sus anuncios
+            
+      // BORRAR FOTO DE PERFIL
+      if (!empty($user['Foto'])) {
+        // Obtener ruta absoluta real
+        $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $user['Foto']);
+        $base = realpath(__DIR__);
+        // Validar que está dentro del proyecto (seguridad)
+        if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+          @unlink($rutaAbs); // Borrar fichero
+        }
+      }
 
-if (!isset($_SESSION['usuario'])) {
-    header("Location: index_no.php");
-    exit;
-}
-
-$mysqli = obtenerConexion();
-
-// ================================
-// 1) OBTENER INFORMACIÓN DEL USUARIO
-// ================================
-$usuarioLog = $_SESSION['usuario'];  
-
-$sql = "SELECT * FROM Usuarios WHERE NomUsuario = ?";
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("s", $usuarioLog);
-$stmt->execute();
-$res = $stmt->get_result();
-
-if ($res->num_rows !== 1) {
-    echo "<p>Error: usuario no encontrado.</p>";
-    require_once("footer.inc");
-    exit;
-}
+      // BORRAR FOTOS DE TODOS LOS ANUNCIOS DEL USUARIO
+      // Consultar todas las fotos de los anuncios del usuario
+      $sql = "SELECT f.Foto AS FotoPath
+          FROM fotos f
+          INNER JOIN anuncios a ON f.Anuncio = a.IdAnuncio
+          WHERE a.Usuario = ?";
+      $stmt = $mysqli->prepare($sql);
+      $stmt->bind_param("i", $idUsuario);
+      $stmt->execute();
+      $resPaths = $stmt->get_result();
+      $base = realpath(__DIR__);
+      // Borrar cada fichero de forma segura
+      while ($rowP = $resPaths->fetch_assoc()) {
+        if (!empty($rowP['FotoPath'])) {
+          $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $rowP['FotoPath']);
+          // Solo borrar si está dentro del proyecto
+          if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+            @unlink($rutaAbs);
+          }
+        }
+      }
+      $stmt->close();
 
 $user = $res->fetch_assoc();
 $idUsuario = (int)$user['IdUsuario'];
@@ -74,8 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $claveIntroducida = $_POST['clave'] ?? '';
 
-    // Validación de contraseña
-    if ($claveIntroducida !== $user['Clave']) {
+    // Validar contraseña usando password_verify()
+    // Compara el texto plano con el hash de la BD
+    if (!password_verify($claveIntroducida, $user['Clave'])) {
         $errores[] = "La contraseña introducida no es correcta.";
     }
 
@@ -87,6 +99,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mysqli->begin_transaction();
 
         try {
+          // 0) Borrar ficheros físicos de todas las fotos de sus anuncios y su foto de perfil
+          // Foto de perfil
+          if (!empty($user['Foto'])) {
+            $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $user['Foto']);
+            $base = realpath(__DIR__);
+            if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+              @unlink($rutaAbs);
+            }
+          }
+
+          // Fotos de anuncios del usuario
+          $sql = "SELECT f.Foto AS FotoPath
+              FROM fotos f
+              INNER JOIN anuncios a ON f.Anuncio = a.IdAnuncio
+              WHERE a.Usuario = ?";
+          $stmt = $mysqli->prepare($sql);
+          $stmt->bind_param("i", $idUsuario);
+          $stmt->execute();
+          $resPaths = $stmt->get_result();
+          $base = realpath(__DIR__);
+          while ($rowP = $resPaths->fetch_assoc()) {
+            if (!empty($rowP['FotoPath'])) {
+              $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $rowP['FotoPath']);
+              if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
+                @unlink($rutaAbs);
+              }
+            }
+          }
+          $stmt->close();
 
             // -------------------------
             // 4.1) BORRAR MENSAJES

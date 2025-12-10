@@ -116,10 +116,17 @@ $mysqli->close();
         </select>
 
         <label>Foto actual:</label>
-        <img src="<?php echo htmlspecialchars($usuario['Foto']); ?>" width="100">
+        <?php
+          $fotoActual = $usuario['Foto'] ?: 'img/user_default.svg';
+        ?>
+        <img src="<?php echo htmlspecialchars($fotoActual); ?>" width="100" alt="Foto de perfil">
 
         <label>Subir nueva foto:</label>
-        <input type="file" name="foto">
+        <input type="file" name="foto" accept="image/*">
+
+        <label style="margin-top:10px; display:block;">
+          <input type="checkbox" name="eliminar_foto" value="1"> Eliminar mi foto de perfil y usar el icono por defecto
+        </label>
       </fieldset>
 
       <p>
