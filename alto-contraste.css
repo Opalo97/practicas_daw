@@ -500,3 +500,54 @@ section[aria-labelledby="tarifas"] a:focus {
         grid-template-columns: 1fr;
     }
 }
+
+/*anuncios recomendados*/
+.anuncio-escogido {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.anuncio-escogido .imagen {
+    margin-right: 20px;
+}
+
+.anuncio-escogido .imagen img {
+    max-width: 200px;
+    height: auto;
+}
+
+.anuncio-escogido .informacion {
+    flex-grow: 1;
+}
+
+.anuncio-escogido h4 {
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.anuncio-escogido p {
+    margin: 5px 0;
+}
+
+.anuncio-escogido em {
+    font-style: italic;
+    color: #555;
+}
+
+/*consejos de compra*/
+.consejo {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+}
+
+.consejo p {
+    margin: 5px 0;
+}
+
+.consejo strong {
+    color: #333;
+}

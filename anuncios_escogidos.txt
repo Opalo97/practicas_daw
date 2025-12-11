@@ -1,0 +1,7 @@
+1 | Lucía Vidal | "No se puede encontrar nada mejor por ese precio en el centro de Alicante, una maravilla."
+2 | Ana Fernández | "Este ático tiene todo lo que necesitas, ¡y las vistas son espectaculares!"
+3 | Carlos Ramírez | "Una ganga en pleno centro, con todo lo que buscas en tu nueva vivienda."
+4 | Miriam Mendiola | "Nos lo quitan de las manos, es una oportunidad que no dejaría pasar."
+5 | Laura García | "El lugar perfecto para empezar una nueva etapa, tranquilo y céntrico."
+
+20 | Marco Polo | "Una joya arquitectónica, de las más amplias y cuidadas del mercado actual."
