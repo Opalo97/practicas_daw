@@ -26,7 +26,7 @@ function obtenerAnuncioEscogido() {
 
     // Verificar si el IdAnuncio existe en la base de datos
     if (!existeAnuncioEnBD($idAnuncio)) {
-        // Si no existe, elegir otra opción (por ejemplo, opción 2: mostrar anuncio genérico)
+        // Si no existe, elegir otra opción : mostrar anuncio genérico
         return obtenerAnuncioGenerico();
     }
 
