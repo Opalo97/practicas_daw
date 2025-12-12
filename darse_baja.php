@@ -6,52 +6,33 @@ ini_set('display_errors', '0');
 
 <?php
       // ===================================================================
-      // 0) BORRAR TODOS LOS FICHEROS FÍSICOS DEL USUARIO
-      // ===================================================================
-      // Al darse de baja, eliminar del servidor:
-      // 1. Foto de perfil del usuario
-      // 2. Todas las fotos de todos sus anuncios
-            
-      // BORRAR FOTO DE PERFIL
-      if (!empty($user['Foto'])) {
-        // Obtener ruta absoluta real
-        $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $user['Foto']);
-        $base = realpath(__DIR__);
-        // Validar que está dentro del proyecto (seguridad)
-        if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
-          @unlink($rutaAbs); // Borrar fichero
-        }
+      // Inicializar sesión y conexión a BD, obtener usuario logueado
+      session_start();
+
+      if (!isset($_SESSION['usuario'])) {
+        header("Location: login.php");
+        exit;
       }
 
-      // BORRAR FOTOS DE TODOS LOS ANUNCIOS DEL USUARIO
-      // Consultar todas las fotos de los anuncios del usuario
-      $sql = "SELECT f.Foto AS FotoPath
-          FROM fotos f
-          INNER JOIN anuncios a ON f.Anuncio = a.IdAnuncio
-          WHERE a.Usuario = ?";
+      require_once("bd.php");
+      require_once("cabecera.inc");
+      require_once("inicio.inc");
+
+      $mysqli = obtenerConexion();
+
+      // Obtener datos del usuario desde la sesión
+      $idUsuario = (int)($_SESSION['idusuario'] ?? 0);
+
+      $sql = "SELECT * FROM usuarios WHERE IdUsuario = ?";
       $stmt = $mysqli->prepare($sql);
       $stmt->bind_param("i", $idUsuario);
       $stmt->execute();
-      $resPaths = $stmt->get_result();
-      $base = realpath(__DIR__);
-      // Borrar cada fichero de forma segura
-      while ($rowP = $resPaths->fetch_assoc()) {
-        if (!empty($rowP['FotoPath'])) {
-          $rutaAbs = realpath(__DIR__ . DIRECTORY_SEPARATOR . $rowP['FotoPath']);
-          // Solo borrar si está dentro del proyecto
-          if ($rutaAbs && strpos($rutaAbs, $base) === 0 && is_file($rutaAbs)) {
-            @unlink($rutaAbs);
-          }
-        }
-      }
+      $res = $stmt->get_result();
+      $user = $res->fetch_assoc();
       $stmt->close();
 
-$user = $res->fetch_assoc();
-$idUsuario = (int)$user['IdUsuario'];
-$fechaRegistro = date("d/m/Y", strtotime($user['FRegistro']));
-$stmt->close();
-
-
+      $usuarioLog = $_SESSION['usuario'];
+      $fechaRegistro = $user ? date("d/m/Y", strtotime($user['FRegistro'])) : '';
 // ================================
 // 2) OBTENER RESUMEN DE ANUNCIOS
 // ================================
